@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Turnstile } from "@marsidev/react-turnstile";
 import "./App.css";
 import {
@@ -1741,15 +1741,14 @@ function App() {
     return (
       <main className="dashboard-container">
         <header className="dashboard-header">
-          <button
-            type="button"
+          <Link
+            to="/home"
             className="brand dashboard-brand"
-            onClick={() => navigate("/")}
-            aria-label="Go to DocuFortis dashboard overview"
+            aria-label="Go to DocuFortis home"
           >
             <span className="brand-icon">D</span>
             <span>DocuFortis</span>
-          </button>
+          </Link>
 
           <div className="user-info">
             <span>Welcome, {user.name}</span>
@@ -2670,10 +2669,10 @@ function App() {
     return (
       <main className="auth-container">
         <section className="auth-card">
-          <div className="brand">
+          <Link to="/home" className="brand">
             <div className="brand-icon">D</div>
             <h1>DocuFortis</h1>
-          </div>
+          </Link>
 
           <h2>Two-Factor Authentication</h2>
 
@@ -2742,10 +2741,10 @@ function App() {
   return (
     <main className="auth-container">
       <section className="auth-card">
-        <div className="brand">
+        <Link to="/home" className="brand">
           <div className="brand-icon">D</div>
           <h1>DocuFortis</h1>
-        </div>
+        </Link>
 
         <p className="tagline">
           Secure document management and sharing

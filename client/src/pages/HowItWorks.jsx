@@ -34,9 +34,12 @@ const steps = [
   },
 ];
 
-export default function HowItWorks() {
+export default function HowItWorks({ user, onLogout, onSettings }) {
   return (
     <PublicPageLayout
+      user={user}
+      onLogout={onLogout}
+      onSettings={onSettings}
       activePage="how-it-works"
       eyebrow="HOW IT WORKS"
       title="Simple document management. Controlled sharing."

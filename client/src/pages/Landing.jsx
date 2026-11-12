@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
+import { PublicProfileMenu } from "./PublicPageLayout";
 
 const features = [
   {
@@ -41,10 +42,10 @@ const features = [
   },
 ];
 
-function Landing() {
+function Landing({ user, onLogout, onSettings }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const closeMenu = () => setMenuOpen(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   return (
     <div className="landing-page">
@@ -1044,13 +1045,24 @@ function Landing() {
         </nav>
 
         <div className="landing-nav-actions">
-          <Link to="/login" className="landing-login" onClick={closeMenu}>
-            Login
-          </Link>
+          {user ? (
+            <PublicProfileMenu
+              user={user}
+              onLogout={onLogout}
+              onSettings={onSettings}
+              onCloseMenu={closeMenu}
+            />
+          ) : (
+            <>
+              <Link to="/login" className="landing-login" onClick={closeMenu}>
+                Login
+              </Link>
 
-          <Link to="/register" className="landing-button" onClick={closeMenu}>
-            Get Started
-          </Link>
+              <Link to="/register" className="landing-button" onClick={closeMenu}>
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -1280,6 +1292,8 @@ function Landing() {
         </div>
 
         <div className="landing-copyright">
+          Built by Code Syndicate
+          <br />
           © {new Date().getFullYear()} DocuFortis. All rights reserved.
         </div>
       </footer>

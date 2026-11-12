@@ -24,6 +24,11 @@
   gap: 13px;
 }
 
+.admin-brand {
+  color: inherit;
+  text-decoration: none;
+}
+
 .admin-brand-mark {
   width: 39px;
   height: 39px;

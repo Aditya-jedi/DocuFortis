@@ -1,9 +1,12 @@
 
 import PublicPageLayout from "./PublicPageLayout";
 
-function Terms() {
+function Terms({ user, onLogout, onSettings }) {
   return (
     <PublicPageLayout
+      user={user}
+      onLogout={onLogout}
+      onSettings={onSettings}
       activePage=""
       eyebrow="Terms of Service"
       title="Terms and Conditions"

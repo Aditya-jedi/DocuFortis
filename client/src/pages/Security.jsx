@@ -44,9 +44,12 @@ const securityMeasures = [
   },
 ];
 
-export default function Security() {
+export default function Security({ user, onLogout, onSettings }) {
   return (
     <PublicPageLayout
+      user={user}
+      onLogout={onLogout}
+      onSettings={onSettings}
       activePage="security"
       eyebrow="SECURITY AT DOCUFORTIS"
       title="Security is built into the experience."

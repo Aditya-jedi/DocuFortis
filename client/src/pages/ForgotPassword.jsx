@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const API_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
@@ -48,10 +49,10 @@ function ForgotPassword() {
   return (
     <main className="auth-container">
       <section className="auth-card">
-        <div className="brand">
+        <Link to="/home" className="brand">
           <div className="brand-icon">D</div>
           <h1>DocuFortis</h1>
-        </div>
+        </Link>
 
         <p className="tagline">
           Secure document management and sharing

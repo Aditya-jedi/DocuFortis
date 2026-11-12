@@ -1,9 +1,12 @@
 
 import PublicPageLayout from "./PublicPageLayout";
 
-function Privacy() {
+function Privacy({ user, onLogout, onSettings }) {
   return (
     <PublicPageLayout
+      user={user}
+      onLogout={onLogout}
+      onSettings={onSettings}
       activePage=""
       eyebrow="Privacy"
       title="Privacy Policy"

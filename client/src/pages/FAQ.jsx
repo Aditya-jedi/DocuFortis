@@ -54,9 +54,12 @@ const questions = [
   },
 ];
 
-function FAQ() {
+function FAQ({ user, onLogout, onSettings }) {
   return (
     <PublicPageLayout
+      user={user}
+      onLogout={onLogout}
+      onSettings={onSettings}
       activePage="FAQ"
       eyebrow="Help Center"
       title="Frequently Asked Questions"

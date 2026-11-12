@@ -1,5 +1,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import "./AdminDashboard.css";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
@@ -246,14 +247,14 @@ function AdminDashboard({ user, onLogout }) {
   return (
     <main className="admin-shell">
       <header className="admin-topbar">
-        <div className="admin-brand">
+        <Link to="/home" className="admin-brand" aria-label="Go to DocuFortis home">
           <div className="admin-brand-mark">D</div>
 
           <div>
             <strong>DocuFortis</strong>
             <span>Administration</span>
           </div>
-        </div>
+        </Link>
 
         <div className="admin-account">
           <div>

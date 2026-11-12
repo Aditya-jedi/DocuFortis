@@ -1,11 +1,12 @@
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
+import { PublicProfileMenu } from "./PublicPageLayout";
 
-function About() {
+function About({ user, onLogout, onSettings }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const closeMenu = () => setMenuOpen(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   return (
     <div className="about-page">
@@ -749,12 +750,23 @@ function About() {
         </nav>
 
         <div className="about-nav-actions">
-          <Link to="/login" className="about-login" onClick={closeMenu}>
-            Login
-          </Link>
-          <Link to="/register" className="about-button" onClick={closeMenu}>
-            Get Started
-          </Link>
+          {user ? (
+            <PublicProfileMenu
+              user={user}
+              onLogout={onLogout}
+              onSettings={onSettings}
+              onCloseMenu={closeMenu}
+            />
+          ) : (
+            <>
+              <Link to="/login" className="about-login" onClick={closeMenu}>
+                Login
+              </Link>
+              <Link to="/register" className="about-button" onClick={closeMenu}>
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -903,6 +915,8 @@ function About() {
         </div>
 
         <div className="about-copyright">
+          Built by Code Syndicate
+          <br />
           © {new Date().getFullYear()} DocuFortis. All rights reserved.
         </div>
       </footer>

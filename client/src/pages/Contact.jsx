@@ -1,9 +1,12 @@
 
 import PublicPageLayout from "./PublicPageLayout";
 
-function Contact() {
+function Contact({ user, onLogout, onSettings }) {
   return (
     <PublicPageLayout
+      user={user}
+      onLogout={onLogout}
+      onSettings={onSettings}
       activePage="contact"
       eyebrow="Get in Touch"
       title="Contact DocuFortis"

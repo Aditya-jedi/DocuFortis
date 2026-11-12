@@ -1,32 +1,15 @@
 
-import { useState, useRef, useEffect } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-function PublicPageLayout({
-  activePage,
-  eyebrow,
-  title,
-  description,
-  children,
+export function PublicProfileMenu({
   user,
   onLogout,
   onSettings,
+  onCloseMenu,
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
-
-  const links = [
-    { label: "Home", to: "/home", key: "home" },
-    { label: "About", to: "/about", key: "about" },
-    { label: "Features", to: "/features", key: "features" },
-    { label: "How It Works", to: "/how-it-works", key: "how-it-works" },
-    { label: "Security", to: "/security", key: "security" },
-    { label: "Plans", to: "/plans", key: "plans" },
-    { label: "Contact", to: "/contact", key: "contact" },
-  ];
-
-  const closeMenu = () => setMenuOpen(false);
 
   const userName =
     user?.name ||
@@ -50,7 +33,9 @@ function PublicPageLayout({
     const handleEscape = (event) => {
       if (event.key === "Escape") {
         setProfileOpen(false);
-        setMenuOpen(false);
+        if (onCloseMenu) {
+          onCloseMenu();
+        }
       }
     };
 
@@ -61,25 +46,236 @@ function PublicPageLayout({
       document.removeEventListener("mousedown", handleOutsideClick);
       document.removeEventListener("keydown", handleEscape);
     };
-  }, []);
+  }, [onCloseMenu]);
+
+  const closeMenus = () => {
+    setProfileOpen(false);
+    if (onCloseMenu) {
+      onCloseMenu();
+    }
+  };
 
   const handleLogout = () => {
-    setProfileOpen(false);
-    closeMenu();
-
+    closeMenus();
     if (onLogout) {
       onLogout();
     }
   };
 
   const handleSettings = () => {
-    setProfileOpen(false);
-    closeMenu();
-
+    closeMenus();
     if (onSettings) {
       onSettings();
     }
   };
+
+  return (
+    <div className="public-profile-wrapper" ref={profileRef}>
+      <style>{`
+        .public-profile-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+
+        .public-profile-trigger {
+          width: 40px;
+          height: 40px;
+          padding: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: 1.5px solid rgba(214, 168, 79, .85);
+          border-radius: 50%;
+          background: linear-gradient(145deg, var(--primary), var(--deep-teal));
+          color: white;
+          font-family: "Manrope", sans-serif;
+          font-size: 16px;
+          font-weight: 800;
+          cursor: pointer;
+          box-shadow:
+            0 4px 12px rgba(22, 124, 114, .18),
+            0 0 10px rgba(214, 168, 79, .12);
+          transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .public-profile-trigger:hover {
+          transform: translateY(-2px);
+          box-shadow:
+            0 7px 17px rgba(22, 124, 114, .22),
+            0 0 13px rgba(214, 168, 79, .2);
+        }
+
+        .public-profile-trigger[aria-expanded="true"] {
+          outline: 3px solid rgba(214, 168, 79, .2);
+          outline-offset: 3px;
+        }
+
+        .public-profile-dropdown {
+          position: absolute;
+          top: calc(100% + 13px);
+          right: 0;
+          z-index: 200;
+          width: 205px;
+          padding: 9px;
+          border: 1px solid rgba(214, 168, 79, .42);
+          border-radius: 15px;
+          background: rgba(255, 255, 255, .96);
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+          box-shadow: 0 14px 35px rgba(23, 74, 69, .14);
+          animation: public-dropdown-in .18s ease-out;
+        }
+
+        @keyframes public-dropdown-in {
+          from {
+            opacity: 0;
+            transform: translateY(-6px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .public-profile-heading {
+          padding: 9px 11px 12px;
+          border-bottom: 1px solid rgba(22, 124, 114, .12);
+          margin-bottom: 6px;
+          overflow: hidden;
+        }
+
+        .public-profile-name {
+          display: block;
+          color: var(--deep-teal);
+          font-size: 13px;
+          font-weight: 800;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .public-profile-label {
+          display: block;
+          margin-top: 3px;
+          color: var(--muted);
+          font-size: 11px;
+        }
+
+        .public-profile-item {
+          width: 100%;
+          min-height: 39px;
+          padding: 9px 11px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          border: none;
+          border-radius: 9px;
+          background: transparent;
+          color: #526762;
+          font-family: inherit;
+          font-size: 13px;
+          font-weight: 650;
+          text-align: left;
+          text-decoration: none;
+          cursor: pointer;
+          transition: background .18s ease, color .18s ease;
+        }
+
+        .public-profile-item:hover {
+          background: var(--mint);
+          color: var(--primary-dark);
+        }
+
+        .public-profile-item.logout {
+          color: #A34D43;
+        }
+
+        .public-profile-item.logout:hover {
+          background: #FBEEEB;
+          color: #923B32;
+        }
+
+        .public-profile-item span:first-child {
+          width: 17px;
+          text-align: center;
+          font-size: 15px;
+        }
+      `}</style>
+
+      <button
+        type="button"
+        className="public-profile-trigger"
+        onClick={() => setProfileOpen((previous) => !previous)}
+        aria-label="Open account menu"
+        aria-expanded={profileOpen}
+        title={userName}
+      >
+        {userInitial}
+      </button>
+
+      {profileOpen && (
+        <div className="public-profile-dropdown">
+          <div className="public-profile-heading">
+            <span className="public-profile-name">{userName}</span>
+            <span className="public-profile-label">My Account</span>
+          </div>
+
+          <Link
+            to="/"
+            className="public-profile-item"
+            onClick={closeMenus}
+          >
+            <span aria-hidden="true">▦</span>
+            Dashboard
+          </Link>
+
+          <button
+            type="button"
+            className="public-profile-item"
+            onClick={handleSettings}
+          >
+            <span aria-hidden="true">⚙</span>
+            Settings
+          </button>
+
+          <button
+            type="button"
+            className="public-profile-item logout"
+            onClick={handleLogout}
+          >
+            <span aria-hidden="true">↪</span>
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PublicPageLayout({
+  activePage,
+  eyebrow,
+  title,
+  description,
+  children,
+  user,
+  onLogout,
+  onSettings,
+}) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const links = [
+    { label: "Home", to: "/home", key: "home" },
+    { label: "About", to: "/about", key: "about" },
+    { label: "Features", to: "/features", key: "features" },
+    { label: "How It Works", to: "/how-it-works", key: "how-it-works" },
+    { label: "Security", to: "/security", key: "security" },
+    { label: "Plans", to: "/plans", key: "plans" },
+    { label: "Contact", to: "/contact", key: "contact" },
+  ];
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   return (
     <div className="public-page">
@@ -271,137 +467,6 @@ function PublicPageLayout({
           box-shadow:
             0 9px 22px rgba(22, 124, 114, .22),
             0 0 0 3px rgba(214, 168, 79, .12);
-        }
-
-        /* Logged-in profile menu */
-        .public-profile-wrapper {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
-
-        .public-profile-trigger {
-          width: 40px;
-          height: 40px;
-          padding: 0;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          border: 1.5px solid rgba(214, 168, 79, .85);
-          border-radius: 50%;
-          background: linear-gradient(145deg, var(--primary), var(--deep-teal));
-          color: white;
-          font-family: "Manrope", sans-serif;
-          font-size: 16px;
-          font-weight: 800;
-          cursor: pointer;
-          box-shadow:
-            0 4px 12px rgba(22, 124, 114, .18),
-            0 0 10px rgba(214, 168, 79, .12);
-          transition: transform .2s ease, box-shadow .2s ease;
-        }
-
-        .public-profile-trigger:hover {
-          transform: translateY(-2px);
-          box-shadow:
-            0 7px 17px rgba(22, 124, 114, .22),
-            0 0 13px rgba(214, 168, 79, .2);
-        }
-
-        .public-profile-trigger[aria-expanded="true"] {
-          outline: 3px solid rgba(214, 168, 79, .2);
-          outline-offset: 3px;
-        }
-
-        .public-profile-dropdown {
-          position: absolute;
-          top: calc(100% + 13px);
-          right: 0;
-          z-index: 200;
-          width: 205px;
-          padding: 9px;
-          border: 1px solid rgba(214, 168, 79, .42);
-          border-radius: 15px;
-          background: rgba(255, 255, 255, .96);
-          backdrop-filter: blur(18px);
-          -webkit-backdrop-filter: blur(18px);
-          box-shadow: 0 14px 35px rgba(23, 74, 69, .14);
-          animation: public-dropdown-in .18s ease-out;
-        }
-
-        @keyframes public-dropdown-in {
-          from {
-            opacity: 0;
-            transform: translateY(-6px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .public-profile-heading {
-          padding: 9px 11px 12px;
-          border-bottom: 1px solid rgba(22, 124, 114, .12);
-          margin-bottom: 6px;
-          overflow: hidden;
-        }
-
-        .public-profile-name {
-          display: block;
-          color: var(--deep-teal);
-          font-size: 13px;
-          font-weight: 800;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .public-profile-label {
-          display: block;
-          margin-top: 3px;
-          color: var(--muted);
-          font-size: 11px;
-        }
-
-        .public-profile-item {
-          width: 100%;
-          min-height: 39px;
-          padding: 9px 11px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          border: none;
-          border-radius: 9px;
-          background: transparent;
-          color: #526762;
-          font-family: inherit;
-          font-size: 13px;
-          font-weight: 650;
-          text-align: left;
-          text-decoration: none;
-          cursor: pointer;
-          transition: background .18s ease, color .18s ease;
-        }
-
-        .public-profile-item:hover {
-          background: var(--mint);
-          color: var(--primary-dark);
-        }
-
-        .public-profile-item.logout {
-          color: #A34D43;
-        }
-
-        .public-profile-item.logout:hover {
-          background: #FBEEEB;
-          color: #923B32;
-        }
-
-        .public-profile-item span:first-child {
-          width: 17px;
-          text-align: center;
-          font-size: 15px;
         }
 
         .public-menu-toggle {
@@ -728,9 +793,6 @@ function PublicPageLayout({
             padding: 48px 6% 68px;
           }
 
-          .public-profile-dropdown {
-            right: 0;
-          }
         }
 
         @media (max-width: 600px) {
@@ -809,7 +871,7 @@ function PublicPageLayout({
           <span className="public-logo-mark">D</span>
           <span className="public-logo-copy">
             <span className="public-logo-name">DocuFortis</span>
-            <span className="public-logo-tagline">By Code Syndicate</span>
+            <span className="public-logo-tagline">by Code Syndicate</span>
           </span>
         </Link>
 
@@ -841,57 +903,12 @@ function PublicPageLayout({
               </Link>
             </>
           ) : (
-            <div className="public-profile-wrapper" ref={profileRef}>
-              <button
-                type="button"
-                className="public-profile-trigger"
-                onClick={() => setProfileOpen((previous) => !previous)}
-                aria-label="Open account menu"
-                aria-expanded={profileOpen}
-                title={userName}
-              >
-                {userInitial}
-              </button>
-
-              {profileOpen && (
-                <div className="public-profile-dropdown">
-                  <div className="public-profile-heading">
-                    <span className="public-profile-name">{userName}</span>
-                    <span className="public-profile-label">My Account</span>
-                  </div>
-
-                  <Link
-                    to="/"
-                    className="public-profile-item"
-                    onClick={() => {
-                      setProfileOpen(false);
-                      closeMenu();
-                    }}
-                  >
-                    <span aria-hidden="true">▦</span>
-                    Dashboard
-                  </Link>
-
-                  <button
-                    type="button"
-                    className="public-profile-item"
-                    onClick={handleSettings}
-                  >
-                    <span aria-hidden="true">⚙</span>
-                    Settings
-                  </button>
-
-                  <button
-                    type="button"
-                    className="public-profile-item logout"
-                    onClick={handleLogout}
-                  >
-                    <span aria-hidden="true">↪</span>
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
+            <PublicProfileMenu
+              user={user}
+              onLogout={onLogout}
+              onSettings={onSettings}
+              onCloseMenu={closeMenu}
+            />
           )}
         </div>
 
@@ -919,7 +936,7 @@ function PublicPageLayout({
           <span className="public-logo-mark">D</span>
           <span className="public-logo-copy">
             <span className="public-logo-name">DocuFortis</span>
-            <span className="public-logo-tagline">By Code Syndicate</span>
+            <span className="public-logo-tagline">by Code Syndicate</span>
           </span>
         </Link>
 

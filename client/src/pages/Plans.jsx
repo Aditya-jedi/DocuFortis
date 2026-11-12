@@ -33,9 +33,12 @@ const plans = [
   },
 ];
 
-export default function Plans() {
+export default function Plans({ user, onLogout, onSettings }) {
   return (
     <PublicPageLayout
+      user={user}
+      onLogout={onLogout}
+      onSettings={onSettings}
       activePage="plans"
       eyebrow="SIMPLE STORAGE PLANS"
       title="Choose the storage that works for you."

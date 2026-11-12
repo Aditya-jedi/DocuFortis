@@ -52,9 +52,12 @@ const features = [
   },
 ];
 
-export default function Features() {
+export default function Features({ user, onLogout, onSettings }) {
   return (
     <PublicPageLayout
+      user={user}
+      onLogout={onLogout}
+      onSettings={onSettings}
       activePage="features"
       eyebrow="WHAT DOCUFORTIS OFFERS"
       title="Everything you need to manage documents securely."
