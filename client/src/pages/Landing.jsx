@@ -118,6 +118,21 @@ function Landing({ user, onLogout, onSettings }) {
           transition: transform 0.2s ease;
         }
 
+        .landing-logo-copy {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          line-height: 1.1;
+        }
+
+        .landing-logo-tagline {
+          color: var(--gold);
+          font-size: 9px;
+          font-weight: 750;
+          letter-spacing: 0.65px;
+          line-height: 1.2;
+        }
+
         .landing-logo:hover {
           transform: translateY(-1px);
         }
@@ -1027,7 +1042,10 @@ function Landing({ user, onLogout, onSettings }) {
       <header className={`landing-nav ${menuOpen ? "menu-open" : ""}`}>
         <Link to="/home" className="landing-logo" onClick={closeMenu}>
           <span className="landing-logo-mark">D</span>
-          DocuFortis
+          <span className="landing-logo-copy">
+            <span>DocuFortis</span>
+            <span className="landing-logo-tagline">by Code Syndicate</span>
+          </span>
         </Link>
 
         <nav
@@ -1042,6 +1060,7 @@ function Landing({ user, onLogout, onSettings }) {
           <Link to="/security" onClick={closeMenu}>Security</Link>
           <Link to="/plans" onClick={closeMenu}>Plans</Link>
           <Link to="/contact" onClick={closeMenu}>Contact</Link>
+          <Link to="/faq" onClick={closeMenu}>FAQ</Link>
         </nav>
 
         <div className="landing-nav-actions">
@@ -1280,7 +1299,10 @@ function Landing({ user, onLogout, onSettings }) {
       <footer className="landing-footer">
         <Link to="/home" className="landing-logo">
           <span className="landing-logo-mark">D</span>
-          DocuFortis
+          <span className="landing-logo-copy">
+            <span>DocuFortis</span>
+            <span className="landing-logo-tagline">by Code Syndicate</span>
+          </span>
         </Link>
 
         <div className="landing-footer-links">
@@ -1292,8 +1314,6 @@ function Landing({ user, onLogout, onSettings }) {
         </div>
 
         <div className="landing-copyright">
-          Built by Code Syndicate
-          <br />
           © {new Date().getFullYear()} DocuFortis. All rights reserved.
         </div>
       </footer>

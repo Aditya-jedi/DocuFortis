@@ -273,6 +273,7 @@ function PublicPageLayout({
     { label: "Security", to: "/security", key: "security" },
     { label: "Plans", to: "/plans", key: "plans" },
     { label: "Contact", to: "/contact", key: "contact" },
+    { label: "FAQ", to: "/faq", key: "faq" },
   ];
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
@@ -689,6 +690,11 @@ function PublicPageLayout({
           color: var(--primary);
         }
 
+        .public-footer-links a[aria-current="page"] {
+          color: var(--primary);
+          font-weight: 750;
+        }
+
         .public-copyright {
           width: 100%;
           padding-top: 22px;
@@ -881,6 +887,7 @@ function PublicPageLayout({
               key={link.key}
               to={link.to}
               className={activePage === link.key ? "active" : ""}
+              aria-current={activePage === link.key ? "page" : undefined}
               onClick={closeMenu}
             >
               {link.label}
@@ -946,8 +953,18 @@ function PublicPageLayout({
           <Link to="/security">Security</Link>
           <Link to="/contact">Contact</Link>
           <Link to="/faq">FAQ</Link>
-          <Link to="/privacy">Privacy Policy</Link>
-          <Link to="/terms">Terms of Service</Link>
+          <Link
+            to="/privacy"
+            aria-current={activePage === "privacy" ? "page" : undefined}
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            to="/terms"
+            aria-current={activePage === "terms" ? "page" : undefined}
+          >
+            Terms of Service
+          </Link>
         </div>
 
         <div className="public-copyright">

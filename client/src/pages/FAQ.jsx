@@ -60,7 +60,7 @@ function FAQ({ user, onLogout, onSettings }) {
       user={user}
       onLogout={onLogout}
       onSettings={onSettings}
-      activePage="FAQ"
+      activePage="faq"
       eyebrow="Help Center"
       title="Frequently Asked Questions"
       description="Find answers to common questions about accounts, document management, sharing, storage, and security."

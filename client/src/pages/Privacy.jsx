@@ -7,7 +7,7 @@ function Privacy({ user, onLogout, onSettings }) {
       user={user}
       onLogout={onLogout}
       onSettings={onSettings}
-      activePage=""
+      activePage="privacy"
       eyebrow="Privacy"
       title="Privacy Policy"
       description="This page explains, at a general level, how DocuFortis handles information when you use the platform."

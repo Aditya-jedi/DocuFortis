@@ -30,31 +30,31 @@ function Contact({ user, onLogout, onSettings }) {
 
         <div className="project-lead-links">
           <a
-            href="YOUR_GITHUB_URL"
+            href="https://github.com/Aditya-jedi"
             target="_blank"
             rel="noopener noreferrer"
           >
             <span>GitHub</span>
             <span className="project-lead-link-value">
-              Add your GitHub URL ↗
+              github.com/Aditya-jedi ↗
             </span>
           </a>
 
           <a
-            href="YOUR_LINKEDIN_URL"
+            href="https://www.linkedin.com/in/aditya-pratap-singh-b4b850327"
             target="_blank"
             rel="noopener noreferrer"
           >
             <span>LinkedIn</span>
             <span className="project-lead-link-value">
-              Add your LinkedIn URL ↗
+              linkedin.com/in/aditya-pratap-singh-b4b850327 ↗
             </span>
           </a>
 
-          <a href="mailto:YOUR_EMAIL_ADDRESS">
+          <a href="mailto:aditya2602006@gmail.com">
             <span>Email</span>
             <span className="project-lead-link-value">
-              Add your email address
+              aditya2602006@gmail.com
             </span>
           </a>
         </div>

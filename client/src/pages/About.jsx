@@ -66,6 +66,21 @@ function About({ user, onLogout, onSettings }) {
           flex-shrink: 0;
         }
 
+        .about-logo-copy {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          line-height: 1.1;
+        }
+
+        .about-logo-tagline {
+          color: var(--gold-dark);
+          font-size: 9px;
+          font-weight: 750;
+          letter-spacing: .65px;
+          line-height: 1.2;
+        }
+
         .about-logo-mark {
           position: relative;
           width: 38px;
@@ -536,6 +551,10 @@ function About({ user, onLogout, onSettings }) {
           border-radius: 10px;
         }
 
+        .about-footer .about-logo-tagline {
+          font-size: 8px;
+        }
+
         .about-footer-links {
           display: flex;
           flex-wrap: wrap;
@@ -551,6 +570,11 @@ function About({ user, onLogout, onSettings }) {
 
         .about-footer-links a:hover {
           color: var(--primary);
+        }
+
+        .about-footer-links a[aria-current="page"] {
+          color: var(--primary);
+          font-weight: 750;
         }
 
         .about-copyright {
@@ -736,7 +760,10 @@ function About({ user, onLogout, onSettings }) {
       <header className={`about-nav ${menuOpen ? "menu-open" : ""}`}>
         <Link to="/home" className="about-logo" onClick={closeMenu}>
           <span className="about-logo-mark">D</span>
-          DocuFortis
+          <span className="about-logo-copy">
+            <span>DocuFortis</span>
+            <span className="about-logo-tagline">by Code Syndicate</span>
+          </span>
         </Link>
 
         <nav className="about-nav-links" aria-label="Main navigation">
@@ -747,6 +774,7 @@ function About({ user, onLogout, onSettings }) {
           <Link to="/security" onClick={closeMenu}>Security</Link>
           <Link to="/plans" onClick={closeMenu}>Plans</Link>
           <Link to="/contact" onClick={closeMenu}>Contact</Link>
+          <Link to="/faq" onClick={closeMenu}>FAQ</Link>
         </nav>
 
         <div className="about-nav-actions">
@@ -903,7 +931,10 @@ function About({ user, onLogout, onSettings }) {
       <footer className="about-footer">
         <Link to="/home" className="about-logo">
           <span className="about-logo-mark">D</span>
-          DocuFortis
+          <span className="about-logo-copy">
+            <span>DocuFortis</span>
+            <span className="about-logo-tagline">by Code Syndicate</span>
+          </span>
         </Link>
 
         <div className="about-footer-links">
@@ -915,8 +946,6 @@ function About({ user, onLogout, onSettings }) {
         </div>
 
         <div className="about-copyright">
-          Built by Code Syndicate
-          <br />
           © {new Date().getFullYear()} DocuFortis. All rights reserved.
         </div>
       </footer>

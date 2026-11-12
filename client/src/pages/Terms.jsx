@@ -7,7 +7,7 @@ function Terms({ user, onLogout, onSettings }) {
       user={user}
       onLogout={onLogout}
       onSettings={onSettings}
-      activePage=""
+      activePage="terms"
       eyebrow="Terms of Service"
       title="Terms and Conditions"
       description="Please read these terms before creating an account or using DocuFortis."
