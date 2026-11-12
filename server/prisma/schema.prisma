@@ -1,0 +1,303 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum SubscriptionPlan {
+  FREE
+  PREMIUM
+}
+
+enum UpgradeRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum PaymentOrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CARD
+}
+
+enum DocumentStatus {
+  ACTIVE
+  DELETED
+}
+
+enum SharePermission {
+  VIEW
+  VIEW_AND_DOWNLOAD
+}
+
+enum AuditAction {
+  USER_REGISTERED
+  USER_LOGIN
+  USER_LOGOUT
+  LOGIN_FAILED
+  MFA_ENABLED
+  MFA_DISABLED
+  DOCUMENT_UPLOADED
+  DOCUMENT_VIEWED
+  DOCUMENT_DOWNLOADED
+  DOCUMENT_DELETED
+  SHARE_CREATED
+  SHARE_ACCESSED
+  SHARE_ACCESS_DENIED
+  SHARE_REVOKED
+  SHARE_EXPIRED
+  RECOVERY_CODE_USED
+  PASSWORD_RESET_REQUESTED
+  PASSWORD_RESET_COMPLETED
+  PREMIUM_REVOKED
+  PAYMENT_ORDER_CREATED
+  PAYMENT_PROCESSING
+  PAYMENT_SUCCEEDED
+  PAYMENT_FAILED
+  PROFILE_UPDATED
+PASSWORD_CHANGED
+}
+
+model User {
+  id           String           @id @default(uuid()) @db.Uuid
+  name         String
+  email        String           @unique
+  googleId     String?          @unique
+  passwordHash String
+  role         UserRole         @default(USER)
+  plan         SubscriptionPlan @default(FREE)
+
+  mfaEnabled          Boolean   @default(false)
+  mfaSecret           String?
+  mfaEnabledAt        DateTime?
+  mfaPendingExpiresAt DateTime?
+  mfaLastUsedStep     BigInt?
+
+  phoneCountryCode String? @db.VarChar(8)
+phoneNumber      String? @db.VarChar(20)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions                Session[]
+  documents               Document[]
+  shares                  ShareGrant[]         @relation("ShareCreator")
+  receivedShares          ShareGrant[]         @relation("ShareRecipient")
+  upgradeRequests         UpgradeRequest[]     @relation("UpgradeRequester")
+  reviewedUpgradeRequests UpgradeRequest[]     @relation("UpgradeReviewer")
+  auditEvents             AuditEvent[]
+  recoveryCodes           MfaRecoveryCode[]
+  passwordResetTokens     PasswordResetToken[]
+  mfaLoginChallenges      MfaLoginChallenge[]
+  paymentOrders           PaymentOrder[]
+
+  @@index([createdAt])
+}
+
+model Session {
+  id         String    @id @default(uuid()) @db.Uuid
+  tokenHash  String    @unique
+  userId     String    @db.Uuid
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Document {
+  id           String         @id @default(uuid()) @db.Uuid
+  ownerId      String         @db.Uuid
+  originalName String
+  storageKey   String         @unique
+  mimeType     String
+  sizeBytes    BigInt
+  sha256Hash   String
+  status       DocumentStatus @default(ACTIVE)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  owner  User         @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  shares ShareGrant[]
+
+  @@index([ownerId, status])
+  @@index([createdAt])
+}
+
+model ShareGrant {
+  id             String          @id @default(uuid()) @db.Uuid
+  documentId     String          @db.Uuid
+  createdById    String          @db.Uuid
+  recipientId    String?         @db.Uuid
+  recipientEmail String
+  permission     SharePermission @default(VIEW)
+
+  // Store only a hash of the random share token.
+  tokenHash String @unique
+
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  document  Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy User     @relation("ShareCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  recipient User?    @relation("ShareRecipient", fields: [recipientId], references: [id], onDelete: SetNull)
+
+  @@index([documentId])
+  @@index([createdById])
+  @@index([recipientId])
+  @@index([expiresAt])
+}
+
+model AuditEvent {
+  id         String      @id @default(uuid()) @db.Uuid
+  userId     String?     @db.Uuid
+  action     AuditAction
+  entityType String?
+  entityId   String?
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?
+
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+}
+
+model MfaRecoveryCode {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model MfaLoginChallenge {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model UpgradeRequest {
+  id           String  @id @default(uuid()) @db.Uuid
+  userId       String  @db.Uuid
+  reviewedById String? @db.Uuid
+
+  status           UpgradeRequestStatus @default(PENDING)
+  paymentStatus    PaymentStatus        @default(PENDING)
+  paymentReference String?
+  paymentOrder     PaymentOrder?
+
+  createdAt  DateTime  @default(now())
+  reviewedAt DateTime?
+
+  user       User  @relation("UpgradeRequester", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy User? @relation("UpgradeReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+  @@index([status, createdAt])
+}
+
+model PaymentOrder {
+  id               String @id @default(uuid()) @db.Uuid
+  orderNumber      String @unique
+  userId           String @db.Uuid
+  upgradeRequestId String @unique @db.Uuid
+
+  amountPaise Int
+  currency    String             @default("INR")
+  status      PaymentOrderStatus @default(PENDING)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  paidAt    DateTime?
+
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  upgradeRequest UpgradeRequest       @relation(fields: [upgradeRequestId], references: [id], onDelete: Cascade)
+  transactions   PaymentTransaction[]
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model PaymentTransaction {
+  id                String @id @default(uuid()) @db.Uuid
+  transactionNumber String @unique
+  orderId           String @db.Uuid
+
+  provider          String @default("DOCUFORTIS_DEMO")
+  providerReference String @unique
+
+  amountPaise   Int
+  currency      String        @default("INR")
+  status        PaymentStatus @default(PENDING)
+  paymentMethod PaymentMethod @default(CARD)
+
+  cardNetwork String?
+  cardLast4   String?
+
+  failureCode    String?
+  failureMessage String?
+
+  createdAt   DateTime  @default(now())
+  processedAt DateTime?
+
+  order PaymentOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
+  @@index([status, createdAt])
+}
