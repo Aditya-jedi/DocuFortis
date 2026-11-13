@@ -89,28 +89,28 @@ function Landing({ user, onLogout, onSettings }) {
         /* Navigation */
 
         .landing-nav {
-          min-height: 78px;
+          min-height: 76px;
           padding: 0 7%;
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 25px;
-          background: rgba(250, 250, 246, 0.88);
-          backdrop-filter: blur(18px);
-          -webkit-backdrop-filter: blur(18px);
-          border-bottom: 1px solid rgba(22, 124, 114, 0.12);
+          background: rgba(250, 250, 246, .82);
+          border-bottom: 1px solid rgba(22, 124, 114, .15);
           position: sticky;
           top: 0;
           z-index: 100;
-          box-shadow: 0 5px 22px rgba(23, 74, 69, 0.035);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          box-shadow: 0 5px 25px rgba(23, 74, 69, .045);
         }
 
         .landing-logo {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 11px;
+          gap: 10px;
           color: var(--deep-teal);
-          font-size: 23px;
+          font-size: 22px;
           font-weight: 800;
           text-decoration: none;
           letter-spacing: -0.8px;
@@ -126,7 +126,7 @@ function Landing({ user, onLogout, onSettings }) {
         }
 
         .landing-logo-tagline {
-          color: var(--gold);
+          color: #A47B2D;
           font-size: 9px;
           font-weight: 750;
           letter-spacing: 0.65px;
@@ -138,17 +138,21 @@ function Landing({ user, onLogout, onSettings }) {
         }
 
         .landing-logo-mark {
-          width: 40px;
-          height: 40px;
+          width: 39px;
+          height: 39px;
           display: grid;
           place-items: center;
-          background: linear-gradient(145deg, #208F83, #115F57);
+          background: linear-gradient(140deg, var(--primary), var(--deep-teal));
           color: #fff;
-          border: 2px solid rgba(214, 168, 79, 0.8);
+          border: 1px solid rgba(214, 168, 79, .8);
           border-radius: 12px;
-          font-size: 21px;
-          font-weight: 800;
-          box-shadow: 0 5px 15px rgba(22, 124, 114, 0.2);
+          font-family: "Manrope", sans-serif;
+          font-size: 20px;
+          font-weight: 850;
+          box-shadow:
+            0 5px 15px rgba(22, 124, 114, .2),
+            0 0 12px rgba(214, 168, 79, .1);
+          flex-shrink: 0;
         }
 
         .landing-nav-links {
@@ -799,24 +803,33 @@ function Landing({ user, onLogout, onSettings }) {
           justify-content: space-between;
           flex-wrap: wrap;
           gap: 25px;
-          background: #F8F9F4;
-          color: #687B77;
-          border-top: 1px solid rgba(22, 124, 114, 0.13);
+          background:
+            radial-gradient(ellipse at 90% 0%, rgba(214, 168, 79, .13), transparent 38%),
+            linear-gradient(120deg, #EAF4F1, #F8F7F0);
+          border-top: 1px solid rgba(22, 124, 114, .15);
+          color: var(--muted);
         }
 
         .landing-footer .landing-logo {
           color: var(--deep-teal);
           font-size: 20px;
+          max-width: 100%;
+        }
+
+        .landing-footer .landing-logo-mark {
+          width: 39px;
+          height: 39px;
         }
 
         .landing-footer-links {
           display: flex;
           flex-wrap: wrap;
-          gap: 23px;
+          gap: 22px;
+          max-width: 100%;
         }
 
         .landing-footer-links a {
-          color: #687B77;
+          color: #60736F;
           text-decoration: none;
           font-size: 13px;
           font-weight: 600;
@@ -829,11 +842,12 @@ function Landing({ user, onLogout, onSettings }) {
 
         .landing-copyright {
           width: 100%;
-          padding-top: 21px;
-          border-top: 1px solid rgba(22, 124, 114, 0.12);
+          padding-top: 22px;
+          border-top: 1px solid rgba(22, 124, 114, .15);
           font-size: 12px;
           text-align: center;
-          color: #82918C;
+          color: #71827D;
+          overflow-wrap: anywhere;
         }
 
         /* Tablet */
@@ -882,7 +896,7 @@ function Landing({ user, onLogout, onSettings }) {
 
         @media (max-width: 900px) {
           .landing-nav {
-            min-height: 70px;
+            min-height: 72px;
             padding: 12px 5%;
             flex-wrap: wrap;
             gap: 0;
@@ -995,9 +1009,13 @@ function Landing({ user, onLogout, onSettings }) {
             padding: 35px 6% 22px;
           }
 
+          .landing-footer .landing-logo {
+            justify-content: center;
+          }
+
           .landing-footer-links {
             justify-content: center;
-            gap: 17px;
+            gap: 16px;
           }
 
           .landing-cta {
@@ -1011,8 +1029,8 @@ function Landing({ user, onLogout, onSettings }) {
           }
 
           .landing-logo-mark {
-            width: 36px;
-            height: 36px;
+            width: 35px;
+            height: 35px;
           }
 
           .landing-nav-actions {

@@ -44,22 +44,22 @@ function About({ user, onLogout, onSettings }) {
           align-items: center;
           justify-content: space-between;
           gap: 25px;
-          background: rgba(250, 250, 246, .86);
-          border-bottom: 1px solid rgba(22, 124, 114, .14);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
+          background: rgba(250, 250, 246, .82);
+          border-bottom: 1px solid rgba(22, 124, 114, .15);
           position: sticky;
           top: 0;
           z-index: 100;
-          box-shadow: 0 5px 20px rgba(23, 74, 69, .035);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          box-shadow: 0 5px 25px rgba(23, 74, 69, .045);
         }
 
         .about-logo {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           gap: 10px;
           color: var(--deep-teal);
-          font-size: 23px;
+          font-size: 22px;
           font-weight: 800;
           text-decoration: none;
           letter-spacing: -.8px;
@@ -83,18 +83,21 @@ function About({ user, onLogout, onSettings }) {
 
         .about-logo-mark {
           position: relative;
-          width: 38px;
-          height: 38px;
+          width: 39px;
+          height: 39px;
           display: grid;
           place-items: center;
-          background: linear-gradient(145deg, var(--primary), var(--deep-teal));
+          background: linear-gradient(140deg, var(--primary), var(--deep-teal));
           color: white;
-          border: 1.5px solid rgba(214, 168, 79, .85);
+          border: 1px solid rgba(214, 168, 79, .8);
           border-radius: 12px;
+          font-family: "Manrope", sans-serif;
           font-size: 20px;
+          font-weight: 850;
           box-shadow:
-            0 5px 14px rgba(22, 124, 114, .2),
-            0 0 10px rgba(214, 168, 79, .12);
+            0 5px 15px rgba(22, 124, 114, .2),
+            0 0 12px rgba(214, 168, 79, .1);
+          flex-shrink: 0;
         }
 
         .about-nav-links {
@@ -528,27 +531,23 @@ function About({ user, onLogout, onSettings }) {
         }
 
         .about-footer {
-          padding: 35px 7% 25px;
+          padding: 42px 7% 25px;
           display: flex;
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 20px;
-          background: rgba(250, 250, 246, .96);
-          border-top: 1px solid rgba(22, 124, 114, .14);
+          gap: 25px;
+          background:
+            radial-gradient(ellipse at 90% 0%, rgba(214, 168, 79, .13), transparent 38%),
+            linear-gradient(120deg, #EAF4F1, #F8F7F0);
+          border-top: 1px solid rgba(22, 124, 114, .15);
           color: var(--muted);
         }
 
         .about-footer .about-logo {
           color: var(--deep-teal);
-          font-size: 19px;
-        }
-
-        .about-footer .about-logo-mark {
-          width: 32px;
-          height: 32px;
-          font-size: 17px;
-          border-radius: 10px;
+          font-size: 20px;
+          max-width: 100%;
         }
 
         .about-footer .about-logo-tagline {
@@ -558,13 +557,15 @@ function About({ user, onLogout, onSettings }) {
         .about-footer-links {
           display: flex;
           flex-wrap: wrap;
+          max-width: 100%;
           gap: 22px;
         }
 
         .about-footer-links a {
-          color: var(--muted);
+          color: #60736F;
           text-decoration: none;
           font-size: 13px;
+          font-weight: 600;
           transition: color .2s ease;
         }
 
@@ -579,11 +580,12 @@ function About({ user, onLogout, onSettings }) {
 
         .about-copyright {
           width: 100%;
-          padding-top: 18px;
-          border-top: 1px solid rgba(22, 124, 114, .13);
+          padding-top: 22px;
+          border-top: 1px solid rgba(22, 124, 114, .15);
           font-size: 12px;
           text-align: center;
-          color: #7B8B86;
+          color: #71827D;
+          overflow-wrap: anywhere;
         }
 
         @media (max-width: 1100px) {
@@ -626,14 +628,14 @@ function About({ user, onLogout, onSettings }) {
 
         @media (max-width: 900px) {
           .about-nav {
-            min-height: 70px;
+            min-height: 72px;
             padding: 12px 5%;
             flex-wrap: wrap;
             gap: 0;
           }
 
           .about-logo {
-            font-size: 20px;
+            font-size: 21px;
           }
 
           .about-menu-toggle {
@@ -718,22 +720,27 @@ function About({ user, onLogout, onSettings }) {
           .about-footer {
             justify-content: center;
             text-align: center;
+            padding: 35px 6% 22px;
+          }
+
+          .about-footer .about-logo {
+            justify-content: center;
           }
 
           .about-footer-links {
             justify-content: center;
-            gap: 15px 20px;
+            gap: 16px;
           }
         }
 
         @media (max-width: 380px) {
           .about-logo {
-            font-size: 18px;
+            font-size: 19px;
           }
 
           .about-logo-mark {
-            width: 34px;
-            height: 34px;
+            width: 35px;
+            height: 35px;
           }
 
           .about-hero h1 {
