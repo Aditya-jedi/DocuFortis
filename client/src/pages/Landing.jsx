@@ -880,9 +880,7 @@ function Landing({ user, onLogout, onSettings }) {
           }
         }
 
-        /* Mobile */
-
-        @media (max-width: 700px) {
+        @media (max-width: 900px) {
           .landing-nav {
             min-height: 70px;
             padding: 12px 5%;
@@ -934,7 +932,11 @@ function Landing({ user, onLogout, onSettings }) {
           .landing-nav-actions .landing-button {
             padding: 10px 15px;
           }
+        }
 
+        /* Mobile */
+
+        @media (max-width: 700px) {
           .landing-hero {
             padding: 78px 6% 75px;
           }

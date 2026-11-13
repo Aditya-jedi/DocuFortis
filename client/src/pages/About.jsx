@@ -624,7 +624,7 @@ function About({ user, onLogout, onSettings }) {
           }
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 900px) {
           .about-nav {
             min-height: 70px;
             padding: 12px 5%;
@@ -684,7 +684,9 @@ function About({ user, onLogout, onSettings }) {
           .about-nav-actions .about-button {
             padding: 10px 13px;
           }
+        }
 
+        @media (max-width: 700px) {
           .about-hero {
             padding: 72px 6%;
           }
