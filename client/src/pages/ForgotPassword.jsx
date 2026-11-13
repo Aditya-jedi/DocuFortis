@@ -47,23 +47,28 @@ function ForgotPassword() {
   }
 
   return (
-    <main className="auth-container">
-      <section className="auth-card">
-        <Link to="/home" className="brand">
-          <div className="brand-icon">D</div>
-          <h1>DocuFortis</h1>
+    <main className="auth-container auth-screen">
+      <section className="auth-card auth-card--recovery">
+        <Link to="/home" className="brand auth-brand">
+          <span className="brand-icon">D</span>
+          <span className="auth-brand-copy">
+            <h1>DocuFortis</h1>
+            <small>by Code Syndicate</small>
+          </span>
         </Link>
 
         <p className="tagline">
           Secure document management and sharing
         </p>
-        <a href="/" className="back-to-login">
-  ← Back to Login
-</a>
+        <div className="auth-secondary-nav">
+          <a href="/" className="back-to-login auth-secondary-link">
+            ← Back to Login
+          </a>
+        </div>
 
         {!submitted ? (
           <>
-            <h2>Forgot your password?</h2>
+            <h2 className="auth-heading">Forgot your password?</h2>
 
             <p className="form-description">
               Enter the email address associated with your
@@ -71,7 +76,7 @@ function ForgotPassword() {
               recovery link if an account exists.
             </p>
 
-            <form onSubmit={handleSubmit}>
+            <form className="auth-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="email">
                   Email address
@@ -111,7 +116,7 @@ function ForgotPassword() {
           </>
         ) : (
           <>
-            <h2>Check your email</h2>
+            <h2 className="auth-heading">Check your email</h2>
 
             <p className="form-description">
               If an account exists with the email address
@@ -126,7 +131,7 @@ function ForgotPassword() {
 
             <button
               type="button"
-              className="submit-button"
+              className="submit-button auth-secondary-button"
               onClick={() => {
                 window.location.href = "/";
               }}

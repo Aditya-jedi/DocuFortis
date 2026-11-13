@@ -709,8 +709,10 @@ function App() {
 
   if (!authChecked) {
     return (
-      <main className="auth-container">
-        <p>Loading DocuFortis...</p>
+      <main className="auth-container auth-screen">
+        <p className="auth-session-loading" role="status">
+          Loading DocuFortis...
+        </p>
       </main>
     );
   }
@@ -2703,21 +2705,24 @@ function App() {
   // MFA verification interface.
   if (mfaChallengeToken) {
     return (
-      <main className="auth-container">
-        <section className="auth-card">
-          <Link to="/home" className="brand">
-            <div className="brand-icon">D</div>
-            <h1>DocuFortis</h1>
+      <main className="auth-container auth-screen">
+        <section className="auth-card auth-card--challenge">
+          <Link to="/home" className="brand auth-brand">
+            <span className="brand-icon">D</span>
+            <span className="auth-brand-copy">
+              <h1>DocuFortis</h1>
+              <small>by Code Syndicate</small>
+            </span>
           </Link>
 
-          <h2>Two-Factor Authentication</h2>
+          <h2 className="auth-heading">Two-Factor Authentication</h2>
 
           <p className="form-description">
             Enter the six-digit code from your authenticator app,
             or use one of your recovery codes.
           </p>
 
-          <form onSubmit={handleMfaVerify}>
+          <form className="auth-form" onSubmit={handleMfaVerify}>
             <div className="form-group">
               <label htmlFor="mfaCode">
                 Authenticator or recovery code
@@ -2752,6 +2757,7 @@ function App() {
 
             <button
               type="button"
+              className="auth-secondary-button"
               onClick={() => {
                 setMfaChallengeToken("");
                 setMfaCode("");
@@ -2775,168 +2781,190 @@ function App() {
 
   // Login and registration interface.
   return (
-    <main className="auth-container">
-      <section className="auth-card">
-        <Link to="/home" className="brand">
-          <div className="brand-icon">D</div>
-          <h1>DocuFortis</h1>
-        </Link>
+    <main className="auth-container auth-screen auth-split-screen">
+      <aside className="auth-brand-panel" aria-label="DocuFortis introduction">
+        <div className="auth-brand-panel-content">
+          <Link to="/home" className="brand auth-brand">
+            <span className="brand-icon">D</span>
+            <span className="auth-brand-copy">
+              <span className="auth-brand-name">DocuFortis</span>
+              <small>by Code Syndicate</small>
+            </span>
+          </Link>
 
-        <p className="tagline">
-          Secure document management and sharing
-        </p>
+          <div className="auth-promo-copy">
+            <span className="auth-promo-eyebrow">YOUR SECURE WORKSPACE</span>
+            <h1>Your Documents.<br />Protected with Confidence.</h1>
+            <p>
+              Store, manage, and share documents in a cloud workspace
+              designed to keep access under your control.
+            </p>
+          </div>
 
-        <div className="auth-tabs">
-          <button
-            type="button"
-            className={isLogin ? "active" : ""}
-            onClick={() => switchAuthMode(true)}
-          >
-            Login
-          </button>
-
-          <button
-            type="button"
-            className={!isLogin ? "active" : ""}
-            onClick={() => switchAuthMode(false)}
-          >
-            Register
-          </button>
+          <div className="auth-panel-accent" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
         </div>
+      </aside>
 
-        <h2>
-          {isLogin ? "Welcome back" : "Create your account"}
-        </h2>
+      <div className="auth-form-panel">
+        <section
+          className={`auth-card ${isLogin ? "auth-card--login" : "auth-card--register"}`}
+        >
+          <div className="auth-tabs">
+            <button
+              type="button"
+              className={isLogin ? "active" : ""}
+              onClick={() => switchAuthMode(true)}
+            >
+              Login
+            </button>
 
-        <p className="form-description">
-          {isLogin
-            ? "Log in to access your secure documents."
-            : "Create an account to get started with DocuFortis."}
-        </p>
+            <button
+              type="button"
+              className={!isLogin ? "active" : ""}
+              onClick={() => switchAuthMode(false)}
+            >
+              Register
+            </button>
+          </div>
 
-        <form onSubmit={handleSubmit}>
-          {!isLogin && (
+          <h2 className="auth-heading">
+            {isLogin ? "Welcome back" : "Create your account"}
+          </h2>
+
+          <p className="form-description">
+            {isLogin
+              ? "Log in to access your secure documents."
+              : "Create an account to get started with DocuFortis."}
+          </p>
+
+          <form className="auth-form" onSubmit={handleSubmit}>
+            {!isLogin && (
+              <div className="form-group">
+                <label htmlFor="name">Full name</label>
+
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  minLength={2}
+                  maxLength={80}
+                  required
+                />
+              </div>
+            )}
+
             <div className="form-group">
-              <label htmlFor="name">Full name</label>
+              <label htmlFor="email">Email address</label>
 
               <input
-                id="name"
-                type="text"
-                placeholder="Enter your full name"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                minLength={2}
-                maxLength={80}
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                maxLength={254}
                 required
               />
             </div>
-          )}
 
-          <div className="form-group">
-            <label htmlFor="email">Email address</label>
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
 
-            <input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              maxLength={254}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-
-            <input
-              id="password"
-              type="password"
-              autoComplete={
-                isLogin ? "current-password" : "new-password"
-              }
-              placeholder="Enter your password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              minLength={isLogin ? 1 : 8}
-              maxLength={128}
-              required
-            />
-          </div>
-
-          {isLogin && (
-            <div className="forgot-password-link">
-              <a href="/forgot-password">Forgot Password?</a>
-            </div>
-          )}
-
-          <div className="captcha-container">
-            {siteKey ? (
-              <Turnstile
-                key={widgetKey}
-                siteKey={siteKey}
-                options={{
-                  action: "authentication",
-                }}
-                onSuccess={(token) => setCaptchaToken(token)}
-                onExpire={() => setCaptchaToken("")}
-                onError={() => {
-                  setCaptchaToken("");
-                  setMessage(
-                    "CAPTCHA could not load. Please try again."
-                  );
-                }}
+              <input
+                id="password"
+                type="password"
+                autoComplete={
+                  isLogin ? "current-password" : "new-password"
+                }
+                placeholder="Enter your password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                minLength={isLogin ? 1 : 8}
+                maxLength={128}
+                required
               />
-            ) : (
-              <p className="error-message">
-                CAPTCHA site key is missing.
-              </p>
+            </div>
+
+            {isLogin && (
+              <div className="forgot-password-link">
+                <a href="/forgot-password">Forgot Password?</a>
+              </div>
             )}
+
+            <div className="captcha-container auth-captcha">
+              {siteKey ? (
+                <Turnstile
+                  key={widgetKey}
+                  siteKey={siteKey}
+                  options={{
+                    action: "authentication",
+                  }}
+                  onSuccess={(token) => setCaptchaToken(token)}
+                  onExpire={() => setCaptchaToken("")}
+                  onError={() => {
+                    setCaptchaToken("");
+                    setMessage(
+                      "CAPTCHA could not load. Please try again."
+                    );
+                  }}
+                />
+              ) : (
+                <p className="error-message">
+                  CAPTCHA site key is missing.
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="submit-button"
+              disabled={loading || !siteKey}
+            >
+              {loading
+                ? "Please wait..."
+                : isLogin
+                  ? "Login to DocuFortis"
+                  : "Create Account"}
+            </button>
+          </form>
+
+          <div className="google-login-divider">
+            <span>OR</span>
           </div>
 
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={loading || !siteKey}
-          >
-            {loading
-              ? "Please wait..."
-              : isLogin
-                ? "Login to DocuFortis"
-                : "Create Account"}
-          </button>
-        </form>
+          <div className="google-login-container auth-google-control">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                setMessage(
+                  "Google sign-in was unsuccessful. Please try again."
+                );
+              }}
+              text="continue_with"
+              theme="outline"
+              shape="rectangular"
+              size="large"
+              width="320"
+            />
+          </div>
 
-        <div className="google-login-divider">
-          <span>OR</span>
-        </div>
+          {message && (
+            <p className="status-message" role="status">
+              {message}
+            </p>
+          )}
 
-        <div className="google-login-container">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => {
-              setMessage(
-                "Google sign-in was unsuccessful. Please try again."
-              );
-            }}
-            text="continue_with"
-            theme="outline"
-            shape="rectangular"
-            size="large"
-            width="320"
-          />
-        </div>
-
-        {message && (
-          <p className="status-message" role="status">
-            {message}
+          <p className="security-note">
+            Your documents. Your control. Your security.
           </p>
-        )}
-
-        <p className="security-note">
-          Your documents. Your control. Your security.
-        </p>
-      </section>
+        </section>
+      </div>
     </main>
   );
 }

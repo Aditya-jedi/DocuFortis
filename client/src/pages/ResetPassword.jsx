@@ -127,47 +127,52 @@ useEffect(() => {
   }
 
   return (
-    <main className="auth-container">
-      <section className="auth-card">
-        <Link to="/home" className="brand">
-          <div className="brand-icon">D</div>
-          <h1>DocuFortis</h1>
+    <main className="auth-container auth-screen">
+      <section className="auth-card auth-card--recovery">
+        <Link to="/home" className="brand auth-brand">
+          <span className="brand-icon">D</span>
+          <span className="auth-brand-copy">
+            <h1>DocuFortis</h1>
+            <small>by Code Syndicate</small>
+          </span>
         </Link>
 
         <p className="tagline">
           Secure document management and sharing
         </p>
-<a href="/" className="back-to-login">
-  ← Back to Login
-</a>
-        <h2>Reset your password</h2>
+        <div className="auth-secondary-nav">
+          <a href="/" className="back-to-login auth-secondary-link">
+            ← Back to Login
+          </a>
+        </div>
+        <h2 className="auth-heading">Reset your password</h2>
 
         <p className="form-description">
           Enter a new password for your DocuFortis account.
         </p>
 
         {tokenChecking ? (
-  <p className="form-description">
-    Verifying your password reset link...
-  </p>
-) : !tokenValid ? (
-  <div>
-    <p className="status-message" role="alert">
-      {message || "This password reset link is invalid or has expired."}
-    </p>
+          <p className="form-description auth-loading-state" role="status">
+            Verifying your password reset link...
+          </p>
+        ) : !tokenValid ? (
+          <div className="auth-feedback-block">
+            <p className="status-message" role="alert">
+              {message || "This password reset link is invalid or has expired."}
+            </p>
 
-    <button
-      type="button"
-      className="submit-button"
-      onClick={() => {
-        window.location.href = "/forgot-password";
-      }}
-    >
-      Request a New Reset Link
-    </button>
-  </div>
-) : (
-  <form onSubmit={handleSubmit}>
+            <button
+              type="button"
+              className="submit-button"
+              onClick={() => {
+                window.location.href = "/forgot-password";
+              }}
+            >
+              Request a New Reset Link
+            </button>
+          </div>
+        ) : (
+          <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="newPassword">
                 New password
@@ -224,11 +229,14 @@ useEffect(() => {
           </form>
         )}
 
- {message && tokenValid && (
-  <p className="status-message" role="status">
-    {message}
-  </p>
-)}
+        {message && tokenValid && (
+          <p
+            className={`status-message ${success ? "auth-feedback-success" : "auth-feedback-error"}`}
+            role="status"
+          >
+            {message}
+          </p>
+        )}
 
         {success && (
           <p className="form-description">
