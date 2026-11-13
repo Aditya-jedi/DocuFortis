@@ -217,7 +217,8 @@ function Landing({ user, onLogout, onSettings }) {
           justify-content: center;
           align-items: center;
           gap: 8px;
-          padding: 13px 22px;
+          min-height: 44px;
+          padding: 12px 21px;
           border-radius: 11px;
           background: linear-gradient(135deg, #208F83, #167C72);
           color: #fff;
@@ -461,12 +462,16 @@ function Landing({ user, onLogout, onSettings }) {
 
         .landing-feature-card {
           padding: 30px;
-          border: 1px solid rgba(22, 124, 114, 0.13);
-          background: rgba(255, 255, 255, 0.78);
-          backdrop-filter: blur(15px);
-          -webkit-backdrop-filter: blur(15px);
-          border-radius: 18px;
-          box-shadow: 0 7px 24px rgba(23, 74, 69, 0.045);
+          border: 1px solid rgba(22, 124, 114, 0.16);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.88),
+            rgba(234, 244, 241, 0.52)
+          );
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border-radius: 19px;
+          box-shadow: 0 8px 26px rgba(23, 74, 69, 0.055);
           transition:
             transform 0.28s ease,
             box-shadow 0.28s ease,
@@ -475,12 +480,12 @@ function Landing({ user, onLogout, onSettings }) {
         }
 
         .landing-feature-card:hover {
-          transform: translateY(-6px);
-          border-color: rgba(214, 168, 79, 0.7);
+          transform: translateY(-3px);
+          border-color: rgba(214, 168, 79, 0.58);
           background: rgba(255, 255, 255, 0.94);
           box-shadow:
-            0 17px 38px rgba(23, 74, 69, 0.09),
-            0 0 0 1px rgba(214, 168, 79, 0.08);
+            0 14px 34px rgba(23, 74, 69, 0.085),
+            0 0 0 1px rgba(214, 168, 79, 0.06);
         }
 
         .landing-feature-icon {
@@ -521,13 +526,17 @@ function Landing({ user, onLogout, onSettings }) {
 
         .landing-step {
           text-align: center;
-          padding: 32px 23px;
-          background: rgba(255, 255, 255, 0.78);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-          border: 1px solid rgba(22, 124, 114, 0.13);
-          border-radius: 18px;
-          box-shadow: 0 7px 24px rgba(23, 74, 69, 0.04);
+          padding: 30px 23px;
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.88),
+            rgba(234, 244, 241, 0.52)
+          );
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(22, 124, 114, 0.16);
+          border-radius: 19px;
+          box-shadow: 0 8px 26px rgba(23, 74, 69, 0.055);
           transition:
             transform 0.25s ease,
             box-shadow 0.25s ease,
@@ -535,9 +544,9 @@ function Landing({ user, onLogout, onSettings }) {
         }
 
         .landing-step:hover {
-          transform: translateY(-5px);
-          border-color: rgba(214, 168, 79, 0.65);
-          box-shadow: 0 15px 32px rgba(23, 74, 69, 0.08);
+          transform: translateY(-3px);
+          border-color: rgba(214, 168, 79, 0.58);
+          box-shadow: 0 14px 34px rgba(23, 74, 69, 0.085);
         }
 
         .landing-step-number {
@@ -640,13 +649,17 @@ function Landing({ user, onLogout, onSettings }) {
         }
 
         .landing-pricing-card {
-          padding: 31px;
-          border: 1px solid rgba(22, 124, 114, 0.15);
+          padding: 30px;
+          border: 1px solid rgba(22, 124, 114, 0.16);
           border-radius: 19px;
-          background: rgba(255, 255, 255, 0.82);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-          box-shadow: 0 8px 25px rgba(23, 74, 69, 0.045);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.9),
+            rgba(234, 244, 241, 0.54)
+          );
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: 0 8px 26px rgba(23, 74, 69, 0.055);
           display: flex;
           flex-direction: column;
           transition:
@@ -656,9 +669,9 @@ function Landing({ user, onLogout, onSettings }) {
         }
 
         .landing-pricing-card:hover {
-          transform: translateY(-5px);
-          border-color: rgba(214, 168, 79, 0.65);
-          box-shadow: 0 16px 34px rgba(23, 74, 69, 0.085);
+          transform: translateY(-3px);
+          border-color: rgba(214, 168, 79, 0.58);
+          box-shadow: 0 14px 34px rgba(23, 74, 69, 0.085);
         }
 
         .landing-pricing-card-premium {

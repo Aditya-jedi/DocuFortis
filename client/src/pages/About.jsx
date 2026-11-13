@@ -404,17 +404,17 @@ function About({ user, onLogout, onSettings }) {
         .about-value-card {
           position: relative;
           overflow: hidden;
-          padding: 29px;
+          padding: 30px;
           border: 1px solid rgba(22, 124, 114, .16);
-          border-radius: 20px;
+          border-radius: 19px;
           background: linear-gradient(
             140deg,
             rgba(255, 255, 255, .88),
-            rgba(234, 244, 241, .62)
+            rgba(234, 244, 241, .52)
           );
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
-          box-shadow: 0 9px 27px rgba(23, 74, 69, .06);
+          box-shadow: 0 8px 26px rgba(23, 74, 69, .055);
           transition:
             transform .28s ease,
             border-color .28s ease,
@@ -435,12 +435,12 @@ function About({ user, onLogout, onSettings }) {
         }
 
         .about-value-card:hover {
-          transform: translateY(-6px);
-          border-color: rgba(214, 168, 79, .62);
+          transform: translateY(-3px);
+          border-color: rgba(214, 168, 79, .58);
           background: rgba(255, 255, 255, .96);
           box-shadow:
-            0 16px 35px rgba(23, 74, 69, .1),
-            0 0 19px rgba(214, 168, 79, .1);
+            0 14px 34px rgba(23, 74, 69, .085),
+            0 0 16px rgba(214, 168, 79, .07);
         }
 
         .about-value-card:hover::before {
@@ -462,7 +462,10 @@ function About({ user, onLogout, onSettings }) {
         .about-value-card h3 {
           margin: 19px 0 10px;
           color: var(--deep-teal);
+          font-family: "Manrope", sans-serif;
           font-size: 18px;
+          font-weight: 750;
+          line-height: 1.35;
         }
 
         .about-value-card p {

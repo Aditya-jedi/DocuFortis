@@ -122,7 +122,9 @@ function Contact({ user, onLogout, onSettings }) {
 
         .project-lead-header h2 {
           margin: 0 0 5px;
-          font-size: 27px;
+          font-family: "Manrope", sans-serif;
+          font-size: 26px;
+          line-height: 1.3;
         }
 
         .project-lead-role {
@@ -145,9 +147,9 @@ function Contact({ user, onLogout, onSettings }) {
           gap: 8px;
           min-width: 0;
           padding: 16px;
-          border: 1px solid rgba(22, 124, 114, .15);
-          border-radius: 13px;
-          background: rgba(234, 244, 241, .58);
+          border: 1px solid rgba(22, 124, 114, .16);
+          border-radius: 12px;
+          background: rgba(234, 244, 241, .68);
           color: #174A45;
           font-size: 13px;
           font-weight: 800;
@@ -159,16 +161,22 @@ function Contact({ user, onLogout, onSettings }) {
         }
 
         .project-lead-links a:hover {
-          transform: translateY(-3px);
-          border-color: rgba(214, 168, 79, .75);
-          box-shadow: 0 8px 20px rgba(23, 74, 69, .08);
+          transform: translateY(-2px);
+          border-color: rgba(214, 168, 79, .58);
+          box-shadow: 0 8px 20px rgba(23, 74, 69, .085);
         }
 
         .project-lead-link-value {
           color: #687B77;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 550;
           overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 900px) {
+          .project-lead-links {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
         }
 
         @media (max-width: 650px) {

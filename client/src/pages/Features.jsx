@@ -74,14 +74,18 @@ export default function Features({ user, onLogout, onSettings }) {
         .feature-card {
           position: relative;
           overflow: hidden;
-          padding: 27px 24px;
+          padding: 28px 24px;
           min-height: 225px;
-          border: 1px solid rgba(22, 124, 114, 0.13);
+          border: 1px solid rgba(22, 124, 114, 0.16);
           border-radius: 19px;
-          background: rgba(255, 255, 255, 0.76);
-          backdrop-filter: blur(15px);
-          -webkit-backdrop-filter: blur(15px);
-          box-shadow: 0 8px 28px rgba(23, 74, 69, 0.055);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.88),
+            rgba(234, 244, 241, 0.52)
+          );
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: 0 8px 26px rgba(23, 74, 69, 0.055);
           transition:
             transform 0.28s ease,
             box-shadow 0.28s ease,
@@ -102,10 +106,10 @@ export default function Features({ user, onLogout, onSettings }) {
         }
 
         .feature-card:hover {
-          transform: translateY(-6px);
-          border-color: rgba(214, 168, 79, 0.55);
+          transform: translateY(-3px);
+          border-color: rgba(214, 168, 79, 0.58);
           background: rgba(255, 255, 255, 0.94);
-          box-shadow: 0 16px 36px rgba(23, 74, 69, 0.11);
+          box-shadow: 0 14px 34px rgba(23, 74, 69, 0.085);
         }
 
         .feature-card:hover::before {
@@ -135,16 +139,17 @@ export default function Features({ user, onLogout, onSettings }) {
         .feature-title {
           margin: 0 0 11px;
           color: #174a45;
-          font-size: 17px;
-          font-weight: 700;
-          line-height: 1.4;
+          font-family: "Manrope", sans-serif;
+          font-size: 18px;
+          font-weight: 750;
+          line-height: 1.35;
         }
 
         .feature-description {
           margin: 0;
           color: #687b77;
-          font-size: 13.5px;
-          line-height: 1.75;
+          font-size: 14px;
+          line-height: 1.8;
         }
 
         @media (max-width: 1050px) {

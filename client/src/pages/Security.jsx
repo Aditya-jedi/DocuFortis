@@ -94,17 +94,17 @@ export default function Security({ user, onLogout, onSettings }) {
           position: relative;
           overflow: hidden;
           min-height: 215px;
-          padding: 26px 23px;
-          border: 1px solid rgba(22, 124, 114, 0.15);
+          padding: 27px 24px;
+          border: 1px solid rgba(22, 124, 114, 0.16);
           border-radius: 19px;
           background: linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.9),
-            rgba(234, 244, 241, 0.62)
+            rgba(255, 255, 255, 0.88),
+            rgba(234, 244, 241, 0.52)
           );
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
-          box-shadow: 0 9px 28px rgba(23, 74, 69, 0.055);
+          box-shadow: 0 8px 26px rgba(23, 74, 69, 0.055);
           transition:
             transform 0.28s ease,
             border-color 0.28s ease,
@@ -125,12 +125,12 @@ export default function Security({ user, onLogout, onSettings }) {
         }
 
         .security-measure-card:hover {
-          transform: translateY(-5px);
-          border-color: rgba(214, 168, 79, 0.62);
+          transform: translateY(-3px);
+          border-color: rgba(214, 168, 79, 0.58);
           background: rgba(255, 255, 255, 0.96);
           box-shadow:
-            0 16px 36px rgba(23, 74, 69, 0.10),
-            0 0 20px rgba(214, 168, 79, 0.08);
+            0 14px 34px rgba(23, 74, 69, 0.085),
+            0 0 16px rgba(214, 168, 79, 0.07);
         }
 
         .security-measure-card:hover::before {
@@ -162,9 +162,10 @@ export default function Security({ user, onLogout, onSettings }) {
           z-index: 1;
           margin: 0 0 11px;
           color: #174A45;
-          font-size: 17px;
+          font-family: "Manrope", sans-serif;
+          font-size: 18px;
           font-weight: 750;
-          line-height: 1.45;
+          line-height: 1.35;
         }
 
         .security-measure-card p {
@@ -172,7 +173,7 @@ export default function Security({ user, onLogout, onSettings }) {
           z-index: 1;
           margin: 0;
           color: #687B77;
-          font-size: 13.5px;
+          font-size: 14px;
           line-height: 1.8;
         }
 
@@ -211,7 +212,7 @@ export default function Security({ user, onLogout, onSettings }) {
           backdrop-filter: blur(15px);
           -webkit-backdrop-filter: blur(15px);
           color: #405A55;
-          box-shadow: 0 9px 26px rgba(23, 74, 69, 0.055);
+          box-shadow: 0 8px 26px rgba(23, 74, 69, 0.055);
         }
 
         .security-approach-accent {
@@ -252,6 +253,7 @@ export default function Security({ user, onLogout, onSettings }) {
           .security-approach {
             padding: 20px;
             gap: 13px;
+            border-radius: 16px;
           }
         }
 

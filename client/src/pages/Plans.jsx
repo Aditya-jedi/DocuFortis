@@ -116,17 +116,17 @@ export default function Plans({ user, onLogout, onSettings }) {
           display: flex;
           flex-direction: column;
           overflow: hidden;
-          padding: 31px;
-          border: 1px solid rgba(22, 124, 114, 0.17);
-          border-radius: 21px;
+          padding: 30px;
+          border: 1px solid rgba(22, 124, 114, 0.16);
+          border-radius: 19px;
           background: linear-gradient(
             145deg,
-            rgba(255, 255, 255, 0.92),
-            rgba(234, 244, 241, 0.62)
+            rgba(255, 255, 255, 0.9),
+            rgba(234, 244, 241, 0.54)
           );
-          backdrop-filter: blur(17px);
-          -webkit-backdrop-filter: blur(17px);
-          box-shadow: 0 11px 32px rgba(23, 74, 69, 0.065);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: 0 8px 26px rgba(23, 74, 69, 0.055);
           transition:
             transform 0.28s ease,
             border-color 0.28s ease,
@@ -147,9 +147,9 @@ export default function Plans({ user, onLogout, onSettings }) {
         }
 
         .public-plan-card:hover {
-          transform: translateY(-5px);
-          border-color: rgba(22, 124, 114, 0.42);
-          box-shadow: 0 18px 40px rgba(23, 74, 69, 0.11);
+          transform: translateY(-3px);
+          border-color: rgba(214, 168, 79, 0.58);
+          box-shadow: 0 14px 34px rgba(23, 74, 69, 0.085);
         }
 
         .public-plan-card:hover::before {
@@ -216,8 +216,10 @@ export default function Plans({ user, onLogout, onSettings }) {
         .public-plan-card h2 {
           margin: 0 0 9px;
           color: #174A45;
-          font-size: 24px;
-          font-weight: 800;
+          font-family: "Manrope", sans-serif;
+          font-size: 23px;
+          font-weight: 750;
+          line-height: 1.35;
         }
 
         .public-plan-storage {
@@ -234,11 +236,11 @@ export default function Plans({ user, onLogout, onSettings }) {
         }
 
         .public-plan-subtitle {
-          min-height: 48px;
+          min-height: 52px;
           margin: 0;
           color: #687B77;
           font-size: 14px;
-          line-height: 1.75;
+          line-height: 1.8;
         }
 
         .public-plan-divider {
@@ -259,8 +261,8 @@ export default function Plans({ user, onLogout, onSettings }) {
           margin: 0 0 30px;
           list-style: none;
           color: #526762;
-          font-size: 13.5px;
-          line-height: 1.65;
+          font-size: 14px;
+          line-height: 1.7;
         }
 
         .public-plan-features li {
@@ -297,7 +299,8 @@ export default function Plans({ user, onLogout, onSettings }) {
           justify-content: center;
           gap: 12px;
           margin-top: auto;
-          padding: 14px 18px;
+          min-height: 48px;
+          padding: 12px 18px;
           border: 1px solid transparent;
           border-radius: 12px;
           text-align: center;
@@ -359,7 +362,7 @@ export default function Plans({ user, onLogout, onSettings }) {
           margin: 28px auto 0;
           padding: 23px 25px;
           border: 1px solid rgba(214, 168, 79, 0.43);
-          border-radius: 18px;
+          border-radius: 19px;
           background: linear-gradient(
             110deg,
             rgba(234, 244, 241, 0.9),
@@ -368,7 +371,7 @@ export default function Plans({ user, onLogout, onSettings }) {
           );
           backdrop-filter: blur(15px);
           -webkit-backdrop-filter: blur(15px);
-          box-shadow: 0 8px 25px rgba(23, 74, 69, 0.05);
+          box-shadow: 0 8px 26px rgba(23, 74, 69, 0.055);
         }
 
         .public-premium-info-heading {
@@ -396,7 +399,7 @@ export default function Plans({ user, onLogout, onSettings }) {
         .public-premium-information p {
           margin: 11px 0 0;
           color: #687B77;
-          font-size: 13.5px;
+          font-size: 14px;
           line-height: 1.8;
         }
 
@@ -407,7 +410,7 @@ export default function Plans({ user, onLogout, onSettings }) {
           }
 
           .public-plan-card {
-            padding: 25px;
+            padding: 23px;
           }
 
           .public-plan-storage {

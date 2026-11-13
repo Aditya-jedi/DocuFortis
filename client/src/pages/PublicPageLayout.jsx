@@ -535,7 +535,7 @@ function PublicPageLayout({
           margin: 24px auto 18px;
           font-family: "Manrope", sans-serif;
           font-size: clamp(34px, 5vw, 53px);
-          line-height: 1.16;
+          line-height: 1.15;
           letter-spacing: -1.9px;
           font-weight: 850;
           color: var(--deep-teal);
@@ -552,54 +552,65 @@ function PublicPageLayout({
         .public-content {
           max-width: 1100px;
           margin: 0 auto;
-          padding: 65px 7% 90px;
+          padding: 62px 7% 84px;
         }
 
         .public-card {
           position: relative;
-          padding: 32px;
+          padding: 30px;
           margin-bottom: 22px;
           border: 1px solid rgba(22, 124, 114, .16);
           border-radius: 19px;
-          background: rgba(255, 255, 255, .78);
+          background: rgba(255, 255, 255, .82);
           box-shadow:
             0 8px 26px rgba(23, 74, 69, .055),
             inset 0 1px 0 rgba(255, 255, 255, .85);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
           transition:
-            transform .28s ease,
             box-shadow .28s ease,
             border-color .28s ease;
         }
 
         .public-card:hover {
-          transform: translateY(-3px);
           border-color: rgba(214, 168, 79, .58);
           box-shadow:
             0 14px 34px rgba(23, 74, 69, .085),
             0 0 0 3px rgba(214, 168, 79, .05);
         }
 
+        details.public-card:hover {
+          transform: translateY(-2px);
+        }
+
         .public-card h2 {
-          margin: 0 0 15px;
+          margin: 0 0 14px;
           color: var(--deep-teal);
           font-family: "Manrope", sans-serif;
-          font-size: 22px;
+          font-size: 21px;
+          font-weight: 750;
+          line-height: 1.35;
           letter-spacing: -.5px;
         }
 
         .public-card h3 {
-          margin: 23px 0 10px;
+          margin: 22px 0 10px;
           color: var(--deep-teal);
-          font-size: 16px;
+          font-family: "Manrope", sans-serif;
+          font-size: 17px;
+          font-weight: 700;
+          line-height: 1.4;
         }
 
         .public-card p,
         .public-card li {
           color: var(--muted);
-          font-size: 14px;
-          line-height: 1.9;
+          font-size: 15px;
+          line-height: 1.8;
+        }
+
+        .public-card > p {
+          margin: 0 0 12px;
         }
 
         .public-card p:last-child {
@@ -608,6 +619,7 @@ function PublicPageLayout({
 
         .public-card ul {
           padding-left: 22px;
+          margin: 0 0 12px;
         }
 
         .public-card li::marker {
@@ -620,10 +632,13 @@ function PublicPageLayout({
         }
 
         details.public-card summary {
+          position: relative;
+          padding-right: 32px;
           color: var(--deep-teal);
           font-weight: 750;
           list-style: none;
           line-height: 1.6;
+          overflow-wrap: anywhere;
         }
 
         details.public-card summary::-webkit-details-marker {
@@ -632,7 +647,9 @@ function PublicPageLayout({
 
         details.public-card summary::after {
           content: "+";
-          float: right;
+          position: absolute;
+          top: 0;
+          right: 0;
           color: var(--primary);
           font-size: 22px;
           font-weight: 500;
@@ -819,7 +836,7 @@ function PublicPageLayout({
           }
 
           .public-card {
-            padding: 23px;
+            padding: 22px;
             border-radius: 16px;
           }
 
@@ -865,6 +882,7 @@ function PublicPageLayout({
           }
 
           .public-card:hover,
+          details.public-card:hover,
           .public-logo:hover,
           .public-button:hover {
             transform: none;
