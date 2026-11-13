@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./Premium.css";
 
 export default function PremiumPlans({
@@ -8,6 +9,18 @@ export default function PremiumPlans({
   return (
     <main className="premium-page">
       <div className="premium-container">
+        <Link
+          to="/home"
+          className="premium-brand"
+          aria-label="DocuFortis by Code Syndicate home"
+        >
+          <span className="premium-brand-mark">D</span>
+          <span>
+            <strong>DocuFortis</strong>
+            <small>by Code Syndicate</small>
+          </span>
+        </Link>
+
         <button className="premium-back" onClick={onBack}>
           ← Back to Dashboard
         </button>

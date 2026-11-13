@@ -252,7 +252,7 @@ function AdminDashboard({ user, onLogout }) {
 
           <div>
             <strong>DocuFortis</strong>
-            <span>Administration</span>
+            <span>by Code Syndicate · Administration</span>
           </div>
         </Link>
 
@@ -461,7 +461,7 @@ function AdminDashboard({ user, onLogout }) {
                             <span
                               className={`admin-status ${
                                 item.role === "ADMIN"
-                                  ? "purple"
+                                  ? "gold"
                                   : "neutral"
                               }`}
                             >

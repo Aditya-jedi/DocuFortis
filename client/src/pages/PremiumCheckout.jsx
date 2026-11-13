@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Premium.css";
 
 const API_URL =
@@ -35,6 +35,19 @@ export default function PremiumCheckout() {
 
   const order = request?.paymentOrder;
   const digits = cardNumber.replace(/\D/g, "");
+  const premiumBrand = (
+    <Link
+      to="/home"
+      className="premium-brand"
+      aria-label="DocuFortis by Code Syndicate home"
+    >
+      <span className="premium-brand-mark">D</span>
+      <span>
+        <strong>DocuFortis</strong>
+        <small>by Code Syndicate</small>
+      </span>
+    </Link>
+  );
 
   useEffect(() => {
     async function loadOrder() {
@@ -171,8 +184,12 @@ export default function PremiumCheckout() {
   if (loading) {
     return (
       <main className="premium-page">
-        <div className="premium-container">
-          <p>Loading your secure checkout...</p>
+        <div className="premium-container premium-checkout premium-checkout-state">
+          {premiumBrand}
+          <div className="premium-state-card" role="status">
+            <span className="premium-spinner" aria-hidden="true" />
+            <p>Loading your demonstration checkout...</p>
+          </div>
         </div>
       </main>
     );
@@ -182,12 +199,22 @@ export default function PremiumCheckout() {
     return (
       <main className="premium-page">
         <div className="premium-container premium-checkout">
-          <h2>Unable to open checkout</h2>
-          <p className="premium-error">{error}</p>
+          {premiumBrand}
+          <section
+            className="premium-state-card premium-checkout-error"
+            role="alert"
+          >
+            <span className="premium-eyebrow">CHECKOUT UNAVAILABLE</span>
+            <h1>Unable to open checkout</h1>
+            <p className="premium-error">{error}</p>
 
-          <button onClick={() => navigate("/premium")}>
-            Back to Premium Plans
-          </button>
+            <button
+              className="premium-pay-button"
+              onClick={() => navigate("/premium")}
+            >
+              Back to Premium Plans
+            </button>
+          </section>
         </div>
       </main>
     );
@@ -200,7 +227,7 @@ export default function PremiumCheckout() {
   return (
     <main className="premium-page">
       <div className="premium-container premium-checkout">
-
+        {premiumBrand}
         <button
           className="premium-back"
           onClick={() => navigate("/premium")}
@@ -209,236 +236,246 @@ export default function PremiumCheckout() {
           ← Back to Plans
         </button>
 
-        <header className="premium-heading">
+        <header className="premium-heading premium-checkout-heading">
           <span className="premium-eyebrow">
-            DOCUFORTIS CHECKOUT
+            PREMIUM UPGRADE · DEMO CHECKOUT
           </span>
 
-          <h1>Complete your upgrade</h1>
+          <h1>Complete your Premium upgrade</h1>
 
           <p>
-            Review your order and enter your demo card details.
+            Review your order summary and continue with the demonstration
+            checkout.
           </p>
         </header>
 
-        <section className="premium-order">
-          <div>
-            <span>Order number</span>
-            <strong>{order?.orderNumber}</strong>
-          </div>
-
-          <div>
-            <span>Premium storage</span>
-            <strong>90 MB</strong>
-          </div>
-
-          <div>
-            <span>Amount</span>
-            <strong>
-              ₹{(order?.amountPaise / 100).toFixed(2)}
-            </strong>
-          </div>
-
-          <div>
-            <span>Currency</span>
-            <strong>{order?.currency}</strong>
-          </div>
-        </section>
-
-        {paymentCompleted ? (
-          <section className="premium-result premium-success">
-            <h2>Payment successful!</h2>
-
-            <p>
-              Your demonstration payment has been recorded.
-              Your Premium upgrade is awaiting administrator approval.
-            </p>
-
-            {result?.reference && (
-              <p>
-                Payment reference:{" "}
-                <code>{result.reference}</code>
-              </p>
-            )}
-
-            <button onClick={() => navigate("/")}>
-              Return to Dashboard
-            </button>
-          </section>
-        ) : (
-          <section className="premium-payment-card">
-
-            <h2>Card details</h2>
-
-            <p className="premium-demo-warning">
-              DEMONSTRATION ONLY — Use fictional test details.
-              Never enter your real card information.
-            </p>
-
-            <label htmlFor="cardholder">
-              Cardholder name
-            </label>
-
-            <input
-              id="cardholder"
-              type="text"
-              placeholder="Name on card"
-              value={cardholder}
-              maxLength={80}
-              autoComplete="off"
-              disabled={processing}
-              onChange={(e) => setCardholder(e.target.value)}
-            />
-
-            <label htmlFor="card-number">
-              Card number
-            </label>
-
-            <div className="premium-card-number-field">
-              <input
-                id="card-number"
-                type="text"
-                inputMode="numeric"
-                placeholder="1234 5678 9012 3456"
-                value={cardNumber}
-                autoComplete="off"
-                disabled={processing}
-                onChange={(e) =>
-                  setCardNumber(formatCardNumber(e.target.value))
-                }
-              />
-
-              <strong>
-                {digits.length ? network : "CARD"}
-              </strong>
+        <div className="premium-checkout-grid">
+          <section className="premium-order">
+            <div className="premium-order-heading">
+              <span className="premium-plan-label">YOUR UPGRADE</span>
+              <h2>Order summary</h2>
             </div>
 
-            <label htmlFor="card-network">
-              Card network
-            </label>
-
-            <select
-              id="card-network"
-              value={network}
-              disabled={processing}
-              onChange={(e) => setNetwork(e.target.value)}
-            >
-              <option value="VISA">Visa</option>
-              <option value="RUPAY">RuPay</option>
-            </select>
-
-            <div className="premium-card-fields">
-
+            <div className="premium-order-details">
               <div>
-                <label htmlFor="card-expiry">
-                  Expiry date
-                </label>
-
-                <input
-                  id="card-expiry"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="MM/YY"
-                  maxLength={5}
-                  value={expiry}
-                  autoComplete="off"
-                  disabled={processing}
-                  onChange={(e) => {
-                    const value = e.target.value
-                      .replace(/\D/g, "")
-                      .slice(0, 4);
-
-                    setExpiry(
-                      value.length > 2
-                        ? `${value.slice(0, 2)}/${value.slice(2)}`
-                        : value
-                    );
-                  }}
-                />
+                <span>Premium storage</span>
+                <strong>90 MB</strong>
               </div>
 
               <div>
-                <label htmlFor="card-cvv">
-                  CVV
-                </label>
+                <span>Amount</span>
+                <strong className="premium-order-amount">
+                  ₹{(order?.amountPaise / 100).toFixed(2)}
+                </strong>
+              </div>
 
+              <div>
+                <span>Currency</span>
+                <strong>{order?.currency}</strong>
+              </div>
+
+              <div>
+                <span>Order number</span>
+                <strong>{order?.orderNumber}</strong>
+              </div>
+            </div>
+
+            <div className="premium-order-note">
+              <span aria-hidden="true">✦</span>
+              <p>Premium access is enabled after administrator approval.</p>
+            </div>
+          </section>
+
+          {paymentCompleted ? (
+            <section className="premium-result premium-success premium-result-card">
+              <span className="premium-result-icon" aria-hidden="true">✓</span>
+              <span className="premium-plan-label">DEMO PAYMENT COMPLETE</span>
+              <h2>Upgrade request submitted</h2>
+              <p>
+                Your demonstration payment has been recorded. Your Premium
+                upgrade is awaiting administrator approval.
+              </p>
+
+              {result?.reference && (
+                <p>
+                  Payment reference:{" "}
+                  <code>{result.reference}</code>
+                </p>
+              )}
+
+              <button onClick={() => navigate("/")}>
+                Return to Dashboard
+              </button>
+            </section>
+          ) : (
+            <section className="premium-payment-card">
+              <div className="premium-payment-heading">
+                <div>
+                  <span className="premium-plan-label">DEMO EXPERIENCE</span>
+                  <h2>Payment details</h2>
+                </div>
+                <span className="premium-payment-mark" aria-hidden="true">D</span>
+              </div>
+
+              <p className="premium-demo-warning">
+                DEMONSTRATION ONLY — This is not a real payment. No real
+                payment gateway or processor is connected, and no real
+                payment or card charge occurs. Use fictional test details;
+                never enter real card information.
+              </p>
+
+              <label htmlFor="cardholder">
+                Cardholder name
+              </label>
+
+              <input
+                id="cardholder"
+                type="text"
+                placeholder="Name on card"
+                value={cardholder}
+                maxLength={80}
+                autoComplete="off"
+                disabled={processing}
+                onChange={(e) => setCardholder(e.target.value)}
+              />
+
+              <label htmlFor="card-number">Card number</label>
+
+              <div className="premium-card-number-field">
                 <input
-                  id="card-cvv"
-                  type="password"
+                  id="card-number"
+                  type="text"
                   inputMode="numeric"
-                  placeholder="•••"
-                  maxLength={4}
-                  value={cvv}
+                  placeholder="1234 5678 9012 3456"
+                  value={cardNumber}
                   autoComplete="off"
                   disabled={processing}
                   onChange={(e) =>
-                    setCvv(
-                      e.target.value.replace(/\D/g, "").slice(0, 4)
-                    )
+                    setCardNumber(formatCardNumber(e.target.value))
                   }
                 />
+                <strong>
+                  {digits.length ? network : "CARD"}
+                </strong>
               </div>
 
-            </div>
+              <label htmlFor="card-network">Card network</label>
 
-            <p className="premium-card-note">
-              Card details stay in this page only. Only the selected
-              simulated outcome, card network and last four digits
-              are sent to the server. No real payment is processed.
-            </p>
+              <select
+                id="card-network"
+                value={network}
+                disabled={processing}
+                onChange={(e) => setNetwork(e.target.value)}
+              >
+                <option value="VISA">Visa</option>
+                <option value="RUPAY">RuPay</option>
+              </select>
 
-            {error && (
-              <p className="premium-error">{error}</p>
-            )}
+              <div className="premium-card-fields">
+                <div>
+                  <label htmlFor="card-expiry">Expiry date</label>
+                  <input
+                    id="card-expiry"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="MM/YY"
+                    maxLength={5}
+                    value={expiry}
+                    autoComplete="off"
+                    disabled={processing}
+                    onChange={(e) => {
+                      const value = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 4);
 
-            {result?.status === "FAILED" && (
-              <div className="premium-result premium-failure">
-                <h3>Payment declined</h3>
+                      setExpiry(
+                        value.length > 2
+                          ? `${value.slice(0, 2)}/${value.slice(2)}`
+                          : value
+                      );
+                    }}
+                  />
+                </div>
 
-                <p>
-                  The demonstration transaction was declined.
-                  You can try again.
-                </p>
-
-                <p>
-                  Transaction:{" "}
-                  <code>{result.transactionNumber}</code>
-                </p>
+                <div>
+                  <label htmlFor="card-cvv">CVV</label>
+                  <input
+                    id="card-cvv"
+                    type="password"
+                    inputMode="numeric"
+                    placeholder="•••"
+                    maxLength={4}
+                    value={cvv}
+                    autoComplete="off"
+                    disabled={processing}
+                    onChange={(e) =>
+                      setCvv(
+                        e.target.value.replace(/\D/g, "").slice(0, 4)
+                      )
+                    }
+                  />
+                </div>
               </div>
-            )}
 
-            <button
-              className="premium-pay-button"
-              onClick={() => {
-                const validationError = validateForm();
+              <p className="premium-card-note">
+                Card details stay in this page only. Only the selected
+                simulated outcome, card network and last four digits
+                are sent to the server. No real payment is processed.
+              </p>
 
-                if (validationError) {
-                  setError(validationError);
-                  return;
-                }
+              {error && (
+                <p className="premium-error">{error}</p>
+              )}
 
-                setError("");
-                setShowPaymentModal(true);
-              }}
-              disabled={processing}
-            >
-              {processing
-                ? "Processing demonstration payment..."
-                : `Pay ₹${(order?.amountPaise / 100).toFixed(2)}`}
-            </button>
+              {result?.status === "FAILED" && (
+                <div className="premium-result premium-failure">
+                  <h3>Payment declined</h3>
 
-            {processing && (
-              <div className="premium-processing">
-                <span className="premium-spinner" />
+                  <p>
+                    The demonstration transaction was declined.
+                    You can try again.
+                  </p>
 
-                <p>
-                  Processing your demonstration transaction...
-                </p>
-              </div>
-            )}
+                  <p>
+                    Transaction:{" "}
+                    <code>{result.transactionNumber}</code>
+                  </p>
+                </div>
+              )}
 
-          </section>
-        )}
+              <button
+                className="premium-pay-button"
+                onClick={() => {
+                  const validationError = validateForm();
+
+                  if (validationError) {
+                    setError(validationError);
+                    return;
+                  }
+
+                  setError("");
+                  setShowPaymentModal(true);
+                }}
+                disabled={processing}
+              >
+                {processing
+                  ? "Processing demonstration payment..."
+                  : `Pay ₹${(order?.amountPaise / 100).toFixed(2)}`}
+              </button>
+
+              {processing && (
+                <div className="premium-processing">
+                  <span className="premium-spinner" />
+
+                  <p>
+                    Processing your demonstration transaction...
+                  </p>
+                </div>
+              )}
+
+            </section>
+          )}
+        </div>
 
         <p className="premium-disclaimer">
           This is a simulated payment experience, not a real

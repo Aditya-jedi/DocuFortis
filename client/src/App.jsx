@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Turnstile } from "@marsidev/react-turnstile";
 import "./App.css";
@@ -115,6 +115,10 @@ function App() {
   const [shareExpiry, setShareExpiry] = useState(24);
   const [sharing, setSharing] = useState(false);
   const [createdShare, setCreatedShare] = useState(null);
+  const shareDialogRef = useRef(null);
+  const sharingInProgressRef = useRef(false);
+  const previousPathRef = useRef(location.pathname);
+  sharingInProgressRef.current = sharing;
 
   const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
@@ -123,6 +127,86 @@ function App() {
 
   const isResetPasswordRoute =
     window.location.pathname === "/reset-password";
+
+  useEffect(() => {
+    if (!sharingDocument) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const previouslyFocused = document.activeElement;
+    const focusFrame = window.requestAnimationFrame(() => {
+      shareDialogRef.current
+        ?.querySelector("button:not([disabled])")
+        ?.focus();
+    });
+
+    document.body.style.overflow = "hidden";
+
+    function handleDialogKeyDown(event) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        if (sharingInProgressRef.current) return;
+        setSharingDocument(null);
+        setCreatedShare(null);
+        setShareEmail("");
+        setMessage("");
+        return;
+      }
+
+      if (event.key !== "Tab" || !shareDialogRef.current) return;
+
+      const focusableElements = shareDialogRef.current.querySelectorAll(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (!firstElement || !lastElement) {
+        event.preventDefault();
+      } else if (
+        !shareDialogRef.current.contains(document.activeElement) &&
+        !event.shiftKey
+      ) {
+        event.preventDefault();
+        firstElement.focus();
+      } else if (
+        !shareDialogRef.current.contains(document.activeElement) &&
+        event.shiftKey
+      ) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    }
+
+    window.addEventListener("keydown", handleDialogKeyDown);
+
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      window.removeEventListener("keydown", handleDialogKeyDown);
+      document.body.style.overflow = previousOverflow;
+
+      if (previouslyFocused instanceof HTMLElement) {
+        previouslyFocused.focus();
+      }
+    };
+  }, [sharingDocument]);
+
+  useEffect(() => {
+    if (previousPathRef.current === location.pathname) return;
+
+    previousPathRef.current = location.pathname;
+    setSharingDocument(null);
+    setCreatedShare(null);
+    setShareEmail("");
+    setSharePermission("VIEW");
+    setShareExpiry(24);
+    setMessage("");
+  }, [location.pathname]);
 
   // Public pages that can be visited without logging in.
   const publicPagePaths = [
@@ -1231,7 +1315,7 @@ function App() {
 
       previewDoc.title = document.originalName;
       previewDoc.body.style.margin = "0";
-      previewDoc.body.style.background = "#111";
+      previewDoc.body.style.background = "#FAFAF6";
 
       if (isImage) {
         const image = previewDoc.createElement("img");
@@ -1505,6 +1589,15 @@ function App() {
       return "ACTIVE";
     };
 
+    const formatSharePermission = (permission) => {
+      if (permission === "VIEW") return "View only";
+      if (permission === "VIEW_AND_DOWNLOAD") {
+        return "View and download";
+      }
+
+      return permission;
+    };
+
     const activeShares = shares.filter(
       (share) => getShareState(share) === "ACTIVE"
     );
@@ -1591,6 +1684,14 @@ function App() {
       </button>
     );
 
+    const supportsDocumentPreview = (document) =>
+      [
+        "application/pdf",
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+      ].includes(document.mimeType);
+
     // Reusable document list.
     const renderDocumentsList = () => (
       <section id="documents" className="documents-section">
@@ -1607,9 +1708,18 @@ function App() {
         {documentsLoading ? (
           <p>Loading documents...</p>
         ) : documents.length === 0 ? (
-          <p className="empty-state">
-            You haven't uploaded any documents yet.
-          </p>
+          <div className="empty-state">
+            <p>You haven't uploaded any documents yet.</p>
+            {dashboardPage !== "overview" && (
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => navigate("/")}
+              >
+                Go to Overview to upload
+              </button>
+            )}
+          </div>
         ) : (
           <div className="documents-list">
             {documents.map((document) => (
@@ -1623,11 +1733,17 @@ function App() {
                   </p>
 
                   <small>{formatDate(document.createdAt)}</small>
+                  {!supportsDocumentPreview(document) && (
+                    <small className="preview-unavailable-note">
+                      Preview unavailable for this file type.
+                    </small>
+                  )}
                 </div>
 
                 <div className="document-actions">
                   <button
                     type="button"
+                    className="document-action-button document-action-primary"
                     onClick={() => {
                       setSharingDocument(document);
                       setShareEmail("");
@@ -1642,14 +1758,13 @@ function App() {
 
                   <button
                     type="button"
+                    className="document-action-button"
                     onClick={() => handlePreview(document)}
-                    disabled={
-                      ![
-                        "application/pdf",
-                        "image/jpeg",
-                        "image/png",
-                        "image/webp",
-                      ].includes(document.mimeType)
+                    disabled={!supportsDocumentPreview(document)}
+                    title={
+                      supportsDocumentPreview(document)
+                        ? undefined
+                        : "Preview is unavailable for this file type."
                     }
                   >
                     View
@@ -1657,6 +1772,7 @@ function App() {
 
                   <button
                     type="button"
+                    className="document-action-button"
                     onClick={() => handleDownload(document)}
                   >
                     Download
@@ -1664,7 +1780,7 @@ function App() {
 
                   <button
                     type="button"
-                    className="delete-button"
+                    className="document-action-button delete-button"
                     onClick={() => handleDelete(document)}
                     disabled={deletingDocumentId === document.id}
                   >
@@ -1697,7 +1813,10 @@ function App() {
                   Recipient: {share.recipientEmail || "Not specified"}
                 </p>
 
-                <p>Permission: {share.permission}</p>
+                <p>
+                  Permission:{" "}
+                  {formatSharePermission(share.permission)}
+                </p>
 
                 <small>
                   Created: {formatDate(share.createdAt)}
@@ -1707,9 +1826,11 @@ function App() {
                   Expires: {formatDate(share.expiresAt)}
                 </small>
 
-                <p>
+                <p className="share-state-line">
                   Status:{" "}
-                  <strong>
+                  <span
+                    className={`share-status-badge share-status-${state.toLowerCase()}`}
+                  >
                     {state === "ACTIVE"
                       ? "Active"
                       : state === "REVOKED"
@@ -1717,7 +1838,7 @@ function App() {
                         : state === "EXPIRED"
                           ? "Expired"
                           : "Document unavailable"}
-                  </strong>
+                  </span>
                 </p>
               </div>
 
@@ -1748,6 +1869,9 @@ function App() {
           >
             <span className="brand-icon">D</span>
             <span>DocuFortis</span>
+            <small className="dashboard-brand-attribution">
+              by Code Syndicate
+            </small>
           </Link>
 
           <div className="user-info">
@@ -1825,148 +1949,183 @@ function App() {
               <p>{pageHeading[1]}</p>
             </div>
 
-            {message && (
+            {message && !sharingDocument && (
               <p className="status-message" role="status">
                 {message}
               </p>
             )}
 
-            {/* Share document form */}
             {sharingDocument && (
-              <section className="upload-card">
-                <h3>Share Document</h3>
-
-                <p>
-                  Document:{" "}
-                  <strong>{sharingDocument.originalName}</strong>
-                </p>
-
-                <div className="share-warning" role="alert">
-                  <strong>Important security notice</strong>
-                  <p>
-                    Your sharing link is displayed only once. Copy and save
-                    it before closing this section. You cannot retrieve the
-                    original link later.
-                  </p>
-                </div>
-
-                <form onSubmit={handleCreateShare}>
-                  <div className="form-group">
-                    <label htmlFor="shareEmail">
-                      Recipient Email
-                    </label>
-
-                    <input
-                      id="shareEmail"
-                      type="email"
-                      placeholder="Enter recipient's email"
-                      value={shareEmail}
-                      onChange={(event) =>
-                        setShareEmail(event.target.value)
-                      }
-                      maxLength={254}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="sharePermission">
-                      Permission
-                    </label>
-
-                    <select
-                      id="sharePermission"
-                      value={sharePermission}
-                      onChange={(event) =>
-                        setSharePermission(event.target.value)
-                      }
-                    >
-                      <option value="VIEW">View only</option>
-                      <option value="VIEW_AND_DOWNLOAD">
-                        View and download
-                      </option>
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="shareExpiry">
-                      Link Expiry
-                    </label>
-
-                    <select
-                      id="shareExpiry"
-                      value={shareExpiry}
-                      onChange={(event) =>
-                        setShareExpiry(event.target.value)
-                      }
-                    >
-                      <option value={1}>1 hour</option>
-                      <option value={24}>24 hours</option>
-                      <option value={72}>3 days</option>
-                      <option value={168}>7 days</option>
-                      <option value={720}>30 days</option>
-                    </select>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="submit-button"
-                    disabled={sharing}
-                  >
-                    {sharing ? "Creating Link..." : "Create Sharing Link"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSharingDocument(null);
-                      setCreatedShare(null);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </form>
-
-                {createdShare && (
-                  <div className="share-result">
-                    <h4>Sharing Link Created</h4>
-
-                    <p>{createdShare.url}</p>
-
+              <div
+                className="share-dialog-backdrop"
+                onMouseDown={(event) => {
+                  if (event.target === event.currentTarget && !sharing) {
+                    setSharingDocument(null);
+                    setCreatedShare(null);
+                    setShareEmail("");
+                    setMessage("");
+                  }
+                }}
+              >
+                <section
+                  ref={shareDialogRef}
+                  className="share-dialog"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="share-dialog-title"
+                  aria-describedby="share-dialog-description"
+                  tabIndex={-1}
+                >
+                  <header className="share-dialog-header">
+                    <div>
+                      <span className="share-dialog-eyebrow">
+                        SECURE SHARING
+                      </span>
+                      <h2 id="share-dialog-title">Share Document</h2>
+                    </div>
                     <button
                       type="button"
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(
-                            createdShare.url
-                          );
-
-                          setMessage(
-                            "Sharing link copied successfully."
-                          );
-                        } catch {
-                          setMessage(
-                            "Unable to copy the link. Please copy it manually."
-                          );
-                        }
+                      className="share-dialog-close"
+                      aria-label="Close sharing dialog"
+                      disabled={sharing}
+                      onClick={() => {
+                        setSharingDocument(null);
+                        setCreatedShare(null);
+                        setShareEmail("");
+                        setMessage("");
                       }}
                     >
-                      Copy Link
+                      <span aria-hidden="true">×</span>
                     </button>
+                  </header>
 
-                    <p>Permission: {createdShare.permission}</p>
+                  <p
+                    id="share-dialog-description"
+                    className="share-dialog-document"
+                  >
+                    Document: <strong>{sharingDocument.originalName}</strong>
+                  </p>
 
+                  <div className="share-warning" role="note">
+                    <strong>Save your link when it appears</strong>
                     <p>
-                      Expires: {formatDate(createdShare.expiresAt)}
-                    </p>
-
-                    <p className="security-note">
-                      Save this URL somewhere secure. It will not be
-                      available again after you close this section.
+                      The link is shown only once and cannot be retrieved
+                      after this dialog is closed.
                     </p>
                   </div>
-                )}
-              </section>
+
+                  <form onSubmit={handleCreateShare}>
+                    <div className="form-group">
+                      <label htmlFor="shareEmail">Recipient Email</label>
+                      <input
+                        id="shareEmail"
+                        type="email"
+                        placeholder="Enter recipient's email"
+                        value={shareEmail}
+                        onChange={(event) =>
+                          setShareEmail(event.target.value)
+                        }
+                        maxLength={254}
+                        required
+                      />
+                    </div>
+
+                    <div className="share-dialog-fields">
+                      <div className="form-group">
+                        <label htmlFor="sharePermission">Permission</label>
+                        <select
+                          id="sharePermission"
+                          value={sharePermission}
+                          onChange={(event) =>
+                            setSharePermission(event.target.value)
+                          }
+                        >
+                          <option value="VIEW">View only</option>
+                          <option value="VIEW_AND_DOWNLOAD">
+                            View and download
+                          </option>
+                        </select>
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="shareExpiry">Link Expiry</label>
+                        <select
+                          id="shareExpiry"
+                          value={shareExpiry}
+                          onChange={(event) =>
+                            setShareExpiry(event.target.value)
+                          }
+                        >
+                          <option value={1}>1 hour</option>
+                          <option value={24}>24 hours</option>
+                          <option value={72}>3 days</option>
+                          <option value={168}>7 days</option>
+                          <option value={720}>30 days</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="share-dialog-actions">
+                      <button
+                        type="submit"
+                        className="submit-button"
+                        disabled={sharing}
+                      >
+                        {sharing ? "Creating Link..." : "Create Sharing Link"}
+                      </button>
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        disabled={sharing}
+                        onClick={() => {
+                          setSharingDocument(null);
+                          setCreatedShare(null);
+                          setShareEmail("");
+                          setMessage("");
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+
+                  {message && (
+                    <p className="status-message" role="status">
+                      {message}
+                    </p>
+                  )}
+
+                  {createdShare && (
+                    <div className="share-result">
+                      <h3>Sharing Link Created</h3>
+                      <p className="share-result-url">{createdShare.url}</p>
+                      <button
+                        type="button"
+                        className="primary-button"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(
+                              createdShare.url
+                            );
+                            setMessage("Sharing link copied successfully.");
+                          } catch {
+                            setMessage(
+                              "Unable to copy the link. Please copy it manually."
+                            );
+                          }
+                        }}
+                      >
+                        Copy Link
+                      </button>
+                      <p>
+                        Permission:{" "}
+                        {formatSharePermission(createdShare.permission)}
+                      </p>
+                      <p>Expires: {formatDate(createdShare.expiresAt)}</p>
+                    </div>
+                  )}
+                </section>
+              </div>
             )}
 
             {/* OVERVIEW */}
@@ -2135,8 +2294,9 @@ function App() {
                     </div>
 
                     {selectedFile && (
-                      <p className="security-note">
-                        Selected: {selectedFile.name}
+                      <p className="security-note selected-file">
+                        Selected: {selectedFile.name} ·{" "}
+                        {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                       </p>
                     )}
 
@@ -2268,6 +2428,7 @@ function App() {
 
                       <button
                         type="button"
+                        className="secondary-button"
                         onClick={async () => {
                           try {
                             await navigator.clipboard.writeText(
@@ -2356,7 +2517,7 @@ function App() {
 
                         <button
                           type="submit"
-                          className="delete-button"
+                          className="danger-outline-button"
                           disabled={mfaActionLoading}
                         >
                           {mfaActionLoading

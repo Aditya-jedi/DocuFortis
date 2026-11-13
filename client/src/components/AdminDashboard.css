@@ -8,13 +8,15 @@
 
 .admin-topbar {
   height: 76px;
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.96);
   border-bottom: 1px solid #E5ECE8;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 34px;
   gap: 20px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 3px 16px rgba(28, 73, 66, 0.035);
 }
 
 .admin-brand,
@@ -256,10 +258,11 @@
 
 .admin-stat-card,
 .admin-panel {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.94);
   border: 1px solid #E5ECE8;
-  border-radius: 12px;
+  border-radius: 15px;
   box-shadow: 0 3px 12px rgba(23, 74, 69, 0.035);
+  backdrop-filter: blur(10px);
 }
 
 .admin-stat-card {
@@ -355,6 +358,22 @@
   width: 100%;
   overflow-x: auto;
   border-radius: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #A8C9BF #EEF4F1;
+}
+
+.admin-table-wrap::-webkit-scrollbar {
+  height: 7px;
+}
+
+.admin-table-wrap::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: #EEF4F1;
+}
+
+.admin-table-wrap::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #A8C9BF;
 }
 
 .admin-table {
@@ -427,7 +446,7 @@
   color: #687A72;
 }
 
-.admin-status.purple {
+.admin-status.gold {
   background: #F8F1DF;
   color: #98742B;
 }
@@ -529,7 +548,8 @@
   border-top: 1px solid #E5ECE8;
 }
 
-.admin-shell button:focus-visible {
+.admin-shell button:focus-visible,
+.admin-shell a:focus-visible {
   outline: 3px solid rgba(22, 124, 114, 0.25);
   outline-offset: 2px;
 }
@@ -537,6 +557,20 @@
 @media (max-width: 900px) {
   .admin-layout {
     grid-template-columns: 190px minmax(0, 1fr);
+  }
+
+  .admin-table {
+    min-width: 680px;
+  }
+
+  .admin-table-wrap::before {
+    display: block;
+    width: max-content;
+    padding: 0 0 8px;
+    color: #71817D;
+    content: "Swipe horizontally to view all columns";
+    font-size: 10px;
+    font-weight: 700;
   }
 
   .admin-main {
@@ -557,7 +591,8 @@
     height: auto;
     min-height: 70px;
     padding: 13px 16px;
-    align-items: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
   .admin-account {
@@ -581,7 +616,39 @@
     display: flex;
     flex-direction: row;
     overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #A8C9BF #EEF4F1;
     gap: 5px;
+  }
+
+  .admin-sidebar::before {
+    position: sticky;
+    z-index: 1;
+    left: 0;
+    content: "Sections · swipe →";
+    flex: 0 0 auto;
+    align-self: center;
+    padding: 8px 9px;
+    border: 1px solid #E5ECE8;
+    border-radius: 7px;
+    background: #FFFFFF;
+    color: #71817D;
+    font-size: 10px;
+    font-weight: 800;
+    box-shadow: 4px 0 9px rgba(23, 74, 69, 0.07);
+  }
+
+  .admin-sidebar::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  .admin-sidebar::-webkit-scrollbar-track {
+    background: #EEF4F1;
+  }
+
+  .admin-sidebar::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #A8C9BF;
   }
 
   .admin-sidebar-label,
@@ -590,6 +657,7 @@
   }
 
   .admin-sidebar > button {
+    min-height: 44px;
     white-space: nowrap;
     padding: 9px 11px;
     font-size: 11px;
@@ -605,6 +673,7 @@
 
   .admin-page-heading {
     align-items: flex-start;
+    flex-wrap: wrap;
   }
 
   .admin-page-heading h1 {
@@ -635,9 +704,6 @@
     font-size: 10px;
   }
 
-  .admin-table {
-    min-width: 680px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

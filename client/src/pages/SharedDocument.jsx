@@ -275,7 +275,7 @@ export default function SharedDocument({ token }) {
   if (accessStatus === "checking") {
     return (
       <main className="shared-document-page">
-        <section className="upload-card">
+        <section className="upload-card shared-document-card">
           <h2>Checking Sharing Link</h2>
           <p>{message}</p>
         </section>
@@ -286,7 +286,7 @@ export default function SharedDocument({ token }) {
   if (accessStatus === "unavailable") {
     return (
       <main className="shared-document-page">
-        <section className="upload-card">
+        <section className="upload-card shared-document-card">
           <h2>Sharing Link Unavailable</h2>
           <p>{message}</p>
           <p>
@@ -300,7 +300,7 @@ export default function SharedDocument({ token }) {
 
   return (
     <main className="shared-document-page">
-      <section className="upload-card">
+      <section className="upload-card shared-document-card">
         <h2>Shared Document</h2>
 
         <p>
