@@ -254,8 +254,8 @@ function App() {
     setShareEmail("");
     setSharePermission("VIEW");
     setShareExpiry(24);
-    setMessage("");
-  }, [location.pathname]);
+    setMessage(location.state?.registrationSuccessMessage || "");
+  }, [location.pathname, location.state]);
 
   // Public pages that can be visited without logging in.
   const publicPagePaths = [
@@ -802,7 +802,13 @@ function App() {
 
         finishAuthentication();
       } else {
-        setMessage(data.message);
+        navigate("/login", {
+          replace: true,
+          state: {
+            registrationSuccessMessage:
+              data.message || "Account created successfully.",
+          },
+        });
       }
     } catch (error) {
       setMessage(error.message);

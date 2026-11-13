@@ -124,8 +124,6 @@ export async function register(req, res) {
         },
       });
 
-      const session = await createSession(user.id, tx);
-
       await tx.auditEvent.create({
         data: {
           userId: user.id,
@@ -136,19 +134,13 @@ export async function register(req, res) {
         },
       });
 
-      return { user, session };
+      return user;
     });
-
-    res.cookie(
-      "docufortis_session",
-      result.session.token,
-      getSessionCookieOptions()
-    );
 
     return res.status(201).json({
       success: true,
       message: "Account created successfully.",
-      user: result.user,
+      user: result,
     });
   } catch (error) {
     if (error.code === "P2002") {

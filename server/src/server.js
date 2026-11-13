@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import { createHash, timingSafeEqual } from "node:crypto";
 import authRoutes from "./routes/authRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import multer from "multer";
@@ -14,6 +15,48 @@ import upgradeRoutes from "./routes/upgradeRoutes.js";
 dotenv.config();
 
 const app = express();
+
+function matchesIpDiagnosticToken(providedToken, configuredToken) {
+  const providedDigest = createHash("sha256")
+    .update(providedToken)
+    .digest();
+  const configuredDigest = createHash("sha256")
+    .update(configuredToken)
+    .digest();
+
+  return timingSafeEqual(providedDigest, configuredDigest);
+}
+
+// Temporary, access-controlled proxy diagnostic; remove after deployment verification.
+app.use((req, res, next) => {
+  const configuredToken = process.env.IP_DIAGNOSTIC_TOKEN;
+  const providedToken = req.get("X-Docufortis-IP-Diagnostic");
+
+  if (
+    configuredToken &&
+    providedToken &&
+    matchesIpDiagnosticToken(providedToken, configuredToken)
+  ) {
+    console.info(
+      "[IP diagnostic]",
+      JSON.stringify({
+        remoteAddress: req.socket.remoteAddress,
+        ip: req.ip,
+        ips: req.ips,
+        headers: {
+          "X-Forwarded-For": req.get("X-Forwarded-For") || null,
+          "X-Real-IP": req.get("X-Real-IP") || null,
+          Forwarded: req.get("Forwarded") || null,
+          "X-Vercel-ID": req.get("X-Vercel-ID") || null,
+          "X-Forwarded-Host": req.get("X-Forwarded-Host") || null,
+          "X-Forwarded-Proto": req.get("X-Forwarded-Proto") || null,
+        },
+      })
+    );
+  }
+
+  return next();
+});
 
 // Resolve the exact frontend origin.
 const CLIENT_ORIGIN = new URL(
