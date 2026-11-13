@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Premium.css";
 
@@ -16,6 +16,9 @@ function formatCardNumber(value) {
 
 export default function PremiumCheckout() {
   const navigate = useNavigate();
+  const checkoutRef = useRef(null);
+  const confirmationDialogRef = useRef(null);
+  const paymentButtonRef = useRef(null);
 
   const [request, setRequest] = useState(null);
 
@@ -32,6 +35,98 @@ export default function PremiumCheckout() {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    if (!showPaymentModal) return undefined;
+
+    const checkout = checkoutRef.current;
+    const paymentButton = paymentButtonRef.current;
+    const previousOverflow = document.body.style.overflow;
+    const previousInert = checkout?.inert ?? false;
+    const previousAriaHidden = checkout?.getAttribute("aria-hidden");
+
+    if (checkout) {
+      checkout.inert = true;
+      checkout.setAttribute("aria-hidden", "true");
+    }
+
+    document.body.style.overflow = "hidden";
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      confirmationDialogRef.current
+        ?.querySelector("button:not([disabled])")
+        ?.focus();
+    });
+
+    function handleDialogKeyDown(event) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setShowPaymentModal(false);
+        return;
+      }
+
+      if (event.key !== "Tab" || !confirmationDialogRef.current) return;
+
+      const focusableElements =
+        confirmationDialogRef.current.querySelectorAll(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+      const firstElement = focusableElements[0];
+      const lastElement =
+        focusableElements[focusableElements.length - 1];
+
+      if (!firstElement || !lastElement) {
+        event.preventDefault();
+      } else if (
+        !confirmationDialogRef.current.contains(document.activeElement) &&
+        !event.shiftKey
+      ) {
+        event.preventDefault();
+        firstElement.focus();
+      } else if (
+        !confirmationDialogRef.current.contains(document.activeElement) &&
+        event.shiftKey
+      ) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (
+        event.shiftKey &&
+        document.activeElement === firstElement
+      ) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (
+        !event.shiftKey &&
+        document.activeElement === lastElement
+      ) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    }
+
+    window.addEventListener("keydown", handleDialogKeyDown);
+
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      window.removeEventListener("keydown", handleDialogKeyDown);
+      document.body.style.overflow = previousOverflow;
+
+      if (checkout) {
+        checkout.inert = previousInert;
+        if (previousAriaHidden === null) {
+          checkout.removeAttribute("aria-hidden");
+        } else {
+          checkout.setAttribute("aria-hidden", previousAriaHidden);
+        }
+      }
+
+      if (paymentButton?.isConnected) {
+        paymentButton.focus();
+      } else {
+        checkout?.focus();
+      }
+    };
+  }, [showPaymentModal]);
 
   const order = request?.paymentOrder;
   const digits = cardNumber.replace(/\D/g, "");
@@ -226,7 +321,11 @@ export default function PremiumCheckout() {
 
   return (
     <main className="premium-page">
-      <div className="premium-container premium-checkout">
+      <div
+        ref={checkoutRef}
+        className="premium-container premium-checkout"
+        tabIndex={-1}
+      >
         {premiumBrand}
         <button
           className="premium-back"
@@ -444,6 +543,7 @@ export default function PremiumCheckout() {
               )}
 
               <button
+                ref={paymentButtonRef}
                 className="premium-pay-button"
                 onClick={() => {
                   const validationError = validateForm();
@@ -488,10 +588,13 @@ export default function PremiumCheckout() {
       {showPaymentModal && (
         <div className="payment-modal-overlay">
           <div
+            ref={confirmationDialogRef}
             className="payment-modal"
             role="dialog"
             aria-modal="true"
             aria-labelledby="payment-modal-title"
+            aria-describedby="payment-modal-description"
+            tabIndex={-1}
           >
             <div className="payment-modal-icon">
               ₹
@@ -501,7 +604,7 @@ export default function PremiumCheckout() {
               Confirm Demo Payment
             </h2>
 
-            <p>
+            <p id="payment-modal-description">
               Choose the simulated result for your
               ₹{(order?.amountPaise / 100).toFixed(2)} transaction.
             </p>

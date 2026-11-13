@@ -30,6 +30,32 @@ import Plans from "./pages/Plans";
 
 const API_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const SHARE_RETURN_TO_KEY = "docufortis.shareReturnTo";
+
+function getSafeShareReturnTo(path) {
+  return typeof path === "string" &&
+    /^\/shared\/[a-f0-9]{64}$/.test(path)
+    ? path
+    : null;
+}
+
+function readStoredShareReturnTo() {
+  try {
+    return getSafeShareReturnTo(
+      window.sessionStorage.getItem(SHARE_RETURN_TO_KEY)
+    );
+  } catch {
+    return null;
+  }
+}
+
+function clearStoredShareReturnTo() {
+  try {
+    window.sessionStorage.removeItem(SHARE_RETURN_TO_KEY);
+  } catch {
+    // The current URL remains available as a fallback.
+  }
+}
 
 const countryNames = new Intl.DisplayNames(["en"], {
   type: "region",
@@ -49,9 +75,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
 
-  const [isLogin, setIsLogin] = useState(
-    location.pathname !== "/register"
-  );
+  const isLogin = location.pathname !== "/register";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -72,13 +96,8 @@ function App() {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordSaving, setPasswordSaving] = useState(false);
 
-  // Premium upgrade and admin state
-  const [upgradeRequest, setUpgradeRequest] = useState(null);
+  // Premium upgrade state
   const [upgradeLoading, setUpgradeLoading] = useState(false);
-
-  const [adminUsers, setAdminUsers] = useState([]);
-  const [adminUpgradeRequests, setAdminUpgradeRequests] = useState([]);
-  const [adminLoading, setAdminLoading] = useState(false);
 
   // MFA login verification
   const [mfaChallengeToken, setMfaChallengeToken] = useState("");
@@ -127,6 +146,36 @@ function App() {
 
   const isResetPasswordRoute =
     window.location.pathname === "/reset-password";
+
+  function getReturnDestination() {
+    return (
+      getSafeShareReturnTo(location.state?.returnTo) ||
+      getSafeShareReturnTo(location.pathname) ||
+      readStoredShareReturnTo()
+    );
+  }
+
+  function finishAuthentication() {
+    const destination = getReturnDestination();
+    clearStoredShareReturnTo();
+    navigate(destination || "/", { replace: true });
+  }
+
+  useEffect(() => {
+    const sharePath =
+      getSafeShareReturnTo(location.state?.returnTo) ||
+      getSafeShareReturnTo(location.pathname);
+
+    if (sharePath && !user) {
+      try {
+        window.sessionStorage.setItem(SHARE_RETURN_TO_KEY, sharePath);
+      } catch {
+        // The current URL remains available as a fallback.
+      }
+    } else {
+      clearStoredShareReturnTo();
+    }
+  }, [location.pathname, location.state, user]);
 
   useEffect(() => {
     if (!sharingDocument) return undefined;
@@ -311,44 +360,6 @@ function App() {
     }
   }, []);
 
-  // Load the logged-in user's profile.
-  const loadProfile = useCallback(async () => {
-    setProfileLoading(true);
-
-    try {
-      const response = await fetch(
-        `${API_URL}/api/auth/profile`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Unable to load account details."
-        );
-      }
-
-      const profile = data.user || data;
-
-      setProfileName(profile.name || "");
-      setProfileEmail(profile.email || "");
-      setPhoneCountryCode(profile.phoneCountryCode || "");
-      setPhoneNumber(profile.phoneNumber || "");
-      setUser((previous) => ({
-        ...previous,
-        ...profile,
-      }));
-    } catch (error) {
-      setMessage(error.message);
-    } finally {
-      setProfileLoading(false);
-    }
-  }, []);
-
   // Update the user's profile.
   const handleProfileUpdate = async (event) => {
     event.preventDefault();
@@ -476,27 +487,6 @@ function App() {
     }
   };
 
-  // Load the logged-in user's latest upgrade request.
-  const loadUpgradeRequest = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `${API_URL}/api/upgrades/my-request`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setUpgradeRequest(data.request || null);
-      }
-    } catch (error) {
-      console.error("Failed to load upgrade request:", error);
-    }
-  }, []);
-
   // Submit Premium upgrade request.
   const submitUpgradeRequest = async (pricingOption) => {
     setUpgradeLoading(true);
@@ -515,10 +505,9 @@ function App() {
         }
       );
 
-      const data = await response.json();
+      const data = await response.json(      );
 
       if (response.status === 409 && data.request) {
-        setUpgradeRequest(data.request);
         setMessage(data.message || "Payment is awaiting admin approval.");
         navigate("/");
         return;
@@ -530,7 +519,6 @@ function App() {
         );
       }
 
-      setUpgradeRequest(data.request || null);
       navigate("/premium/checkout");
     } catch (error) {
       setMessage(error.message);
@@ -539,145 +527,9 @@ function App() {
     }
   };
 
-  // Simulate Premium upgrade payment.
-  const simulateUpgradePayment = async (outcome) => {
-    if (!upgradeRequest?.id) return;
-
-    setUpgradeLoading(true);
-    setMessage("");
-
-    try {
-      const response = await fetch(
-        `${API_URL}/api/upgrades/${upgradeRequest.id}/payment`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ outcome }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Unable to process demo payment."
-        );
-      }
-
-      setUpgradeRequest((previous) => ({
-        ...previous,
-        paymentStatus: data.payment.status,
-        paymentReference: data.payment.reference,
-      }));
-
-      setMessage(data.message || "Demo payment updated.");
-
-      await loadUpgradeRequest();
-    } catch (error) {
-      setMessage(error.message);
-    } finally {
-      setUpgradeLoading(false);
-    }
-  };
-
-  // Load admin dashboard data.
-  const loadAdminData = useCallback(async () => {
-    setAdminLoading(true);
-
-    try {
-      const [usersResponse, requestsResponse] = await Promise.all([
-        fetch(`${API_URL}/api/admin/users`, {
-          credentials: "include",
-        }),
-        fetch(`${API_URL}/api/admin/upgrade-requests`, {
-          credentials: "include",
-        }),
-      ]);
-
-      const usersData = await usersResponse.json();
-      const requestsData = await requestsResponse.json();
-
-      if (!usersResponse.ok || !requestsResponse.ok) {
-        throw new Error(
-          usersData.message ||
-            requestsData.message ||
-            "Unable to load admin dashboard data."
-        );
-      }
-
-      setAdminUsers(usersData.users || []);
-      setAdminUpgradeRequests(requestsData.requests || []);
-    } catch (error) {
-      console.error("Admin dashboard error:", error);
-      setMessage(error.message);
-    } finally {
-      setAdminLoading(false);
-    }
-  }, []);
-
-  // Approve or reject an upgrade request.
-  const reviewUpgradeRequest = async (requestId, decision) => {
-    const confirmed = window.confirm(
-      decision === "APPROVED"
-        ? "Approve this Premium upgrade request?"
-        : "Reject this Premium upgrade request?"
-    );
-
-    if (!confirmed) return;
-
-    setAdminLoading(true);
-    setMessage("");
-
-    try {
-      const response = await fetch(
-        `${API_URL}/api/admin/upgrade-requests/${requestId}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ decision }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Unable to review upgrade request."
-        );
-      }
-
-      setMessage(data.message || "Upgrade request reviewed.");
-
-      await loadAdminData();
-
-      const userResponse = await fetch(
-        `${API_URL}/api/auth/me`,
-        {
-          credentials: "include",
-        }
-      );
-
-      if (userResponse.ok) {
-        const userData = await userResponse.json();
-        setUser(userData.user || userData);
-      }
-    } catch (error) {
-      setMessage(error.message);
-    } finally {
-      setAdminLoading(false);
-    }
-  };
-
   // Check whether the user already has an active session.
   useEffect(() => {
     if (isResetPasswordRoute || isForgotPasswordRoute) {
-      setAuthChecked(true);
       return;
     }
 
@@ -700,7 +552,6 @@ function App() {
         if (currentUser.role !== "ADMIN") {
           await loadDocuments();
           await loadShares();
-          await loadUpgradeRequest();
         }
       } catch (error) {
         console.error("Session check failed:", error);
@@ -716,25 +567,15 @@ function App() {
     isForgotPasswordRoute,
     loadDocuments,
     loadShares,
-    loadUpgradeRequest,
   ]);
-
-  // Automatically load admin dashboard data for ADMIN accounts.
-  useEffect(() => {
-    if (user?.role === "ADMIN") {
-      loadAdminData();
-    } else {
-      setAdminUsers([]);
-      setAdminUpgradeRequests([]);
-    }
-  }, [user, loadAdminData]);
 
   // Keep admins on the dashboard unless they visit a public page.
   useEffect(() => {
     if (
       user?.role === "ADMIN" &&
       !isPublicPage &&
-      location.pathname !== "/"
+      location.pathname !== "/" &&
+      !location.pathname.startsWith("/shared/")
     ) {
       navigate("/", { replace: true });
     }
@@ -745,25 +586,62 @@ function App() {
     navigate,
   ]);
 
-  // Keep the login/register interface synchronized with the URL.
-  useEffect(() => {
-    if (location.pathname === "/login") {
-      setIsLogin(true);
-    } else if (location.pathname === "/register") {
-      setIsLogin(false);
-    }
-  }, [location.pathname]);
-
   // Load profile when the Settings page is opened.
+  const profileUserId =
+    user?.role !== "ADMIN" ? user?.id : null;
+
   useEffect(() => {
-    if (
-      user &&
-      user.role !== "ADMIN" &&
-      location.pathname === "/dashboard/settings"
-    ) {
-      loadProfile();
+    if (!profileUserId || location.pathname !== "/dashboard/settings") {
+      return undefined;
     }
-  }, [user?.id, location.pathname, loadProfile]);
+
+    let active = true;
+
+    async function fetchProfile() {
+      setProfileLoading(true);
+
+      try {
+        const response = await fetch(
+          `${API_URL}/api/auth/profile`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message || "Unable to load account details."
+          );
+        }
+
+        if (!active) return;
+
+        const profile = data.user || data;
+
+        setProfileName(profile.name || "");
+        setProfileEmail(profile.email || "");
+        setPhoneCountryCode(profile.phoneCountryCode || "");
+        setPhoneNumber(profile.phoneNumber || "");
+        setUser((previous) => ({
+          ...previous,
+          ...profile,
+        }));
+      } catch (error) {
+        if (active) setMessage(error.message);
+      } finally {
+        if (active) setProfileLoading(false);
+      }
+    }
+
+    void fetchProfile();
+
+    return () => {
+      active = false;
+    };
+  }, [profileUserId, location.pathname]);
 
   // Handle shared document links after checking authentication.
   const sharedDocumentMatch = window.location.pathname.match(
@@ -919,9 +797,8 @@ function App() {
 
         await loadDocuments();
         await loadShares();
-        await loadUpgradeRequest();
 
-        navigate("/", { replace: true });
+        finishAuthentication();
       } else {
         setMessage(data.message);
       }
@@ -985,9 +862,8 @@ function App() {
 
       await loadDocuments();
       await loadShares();
-      await loadUpgradeRequest();
 
-      navigate("/", { replace: true });
+      finishAuthentication();
     } catch (error) {
       setMessage(error.message);
     } finally {
@@ -1038,9 +914,8 @@ function App() {
 
       await loadDocuments();
       await loadShares();
-      await loadUpgradeRequest();
 
-      navigate("/", { replace: true });
+      finishAuthentication();
     } catch (error) {
       setMessage(error.message);
       setMfaCode("");
@@ -1499,9 +1374,7 @@ function App() {
       setDocuments([]);
       setShares([]);
       setStorageUsage(null);
-      setUpgradeRequest(null);
-      setAdminUsers([]);
-      setAdminUpgradeRequests([]);
+      clearStoredShareReturnTo();
       setProfileName("");
       setProfileEmail("");
       setPhoneCountryCode("");
@@ -1513,13 +1386,15 @@ function App() {
   }
 
   function switchAuthMode(loginMode) {
-    setIsLogin(loginMode);
     setMessage("");
     setPassword("");
     setCaptchaToken("");
     setWidgetKey((previous) => previous + 1);
 
-    navigate(loginMode ? "/login" : "/register");
+    const destination = getReturnDestination();
+    navigate(loginMode ? "/login" : "/register", {
+      state: destination ? { returnTo: destination } : null,
+    });
   }
 
   // Authenticated dashboard.

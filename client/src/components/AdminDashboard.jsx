@@ -53,7 +53,7 @@ function AdminDashboard({ user, onLogout }) {
   const [upgradeRequests, setUpgradeRequests] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busyId, setBusyId] = useState(null);
@@ -80,9 +80,6 @@ function AdminDashboard({ user, onLogout }) {
   }, []);
 
   const loadAll = useCallback(async () => {
-    setLoading(true);
-    setError("");
-
     try {
       const [
         overviewData,
@@ -117,7 +114,17 @@ function AdminDashboard({ user, onLogout }) {
   }, [request]);
 
   useEffect(() => {
-    loadAll();
+    async function loadInitialData() {
+      await loadAll();
+    }
+
+    void loadInitialData();
+  }, [loadAll]);
+
+  const refreshData = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    await loadAll();
   }, [loadAll]);
 
   const pendingRequests = useMemo(
@@ -155,7 +162,7 @@ function AdminDashboard({ user, onLogout }) {
 
       setNotice(data.message || "Upgrade request updated.");
 
-      await loadAll();
+      await refreshData();
     } catch (actionError) {
       setError(actionError.message);
     } finally {
@@ -184,7 +191,7 @@ function AdminDashboard({ user, onLogout }) {
 
       setNotice(data.message || "Premium access revoked successfully.");
 
-      await loadAll();
+      await refreshData();
     } catch (actionError) {
       setError(actionError.message);
     } finally {
@@ -219,7 +226,7 @@ function AdminDashboard({ user, onLogout }) {
         data.message || "Document permanently deleted."
       );
 
-      await loadAll();
+      await refreshData();
     } catch (actionError) {
       setError(actionError.message);
     } finally {
@@ -320,7 +327,7 @@ function AdminDashboard({ user, onLogout }) {
             <button
               type="button"
               className="admin-refresh"
-              onClick={loadAll}
+              onClick={refreshData}
               disabled={loading}
             >
               {loading ? "Refreshing…" : "Refresh data"}
