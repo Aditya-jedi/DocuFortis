@@ -51,10 +51,10 @@ function Contact({ user, onLogout, onSettings }) {
             </span>
           </a>
 
-          <a href="mailto:aditya2602006@gmail.com">
+          <a href="mailto:codesyndicate.dev@gmail.com">
             <span>Email</span>
             <span className="project-lead-link-value">
-              aditya2602006@gmail.com
+              codesyndicate.dev@gmail.com
             </span>
           </a>
         </div>
@@ -64,8 +64,11 @@ function Contact({ user, onLogout, onSettings }) {
         <h2>Questions and feedback</h2>
         <p>
           For questions about using DocuFortis, account access, document
-          sharing, or platform functionality, contact the project
-          administrator through the contact channel provided to you.
+          sharing, or platform functionality, email{" "}
+          <a href="mailto:codesyndicate.dev@gmail.com">
+            codesyndicate.dev@gmail.com
+          </a>
+          .
         </p>
       </section>
 
@@ -83,8 +86,12 @@ function Contact({ user, onLogout, onSettings }) {
         <h2>Security-related concerns</h2>
         <p>
           If you notice a potential security issue, report it responsibly
-          to the project administrator. Avoid sharing sensitive details
-          publicly or attempting to access another user's account or files.
+          by emailing{" "}
+          <a href="mailto:codesyndicate.dev@gmail.com">
+            codesyndicate.dev@gmail.com
+          </a>
+          . Avoid sharing sensitive details publicly or attempting to
+          access another user's account or files.
         </p>
       </section>
 

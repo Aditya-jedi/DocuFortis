@@ -10,12 +10,12 @@ const questions = [
   {
     question: "How do I create an account?",
     answer:
-      "Open the registration page, provide the requested details, complete the available verification steps, and follow the on-screen instructions to create your account.",
+      "Open the registration page, provide the requested details, complete the Cloudflare Turnstile security check, and follow the on-screen instructions to create your account.",
   },
   {
     question: "What file types can I upload?",
     answer:
-      "The platform currently supports PDF, JPEG, PNG, WebP, and TXT files. The upload interface also enforces a maximum individual file size.",
+      "The platform supports PDF, JPEG, PNG, WebP, and TXT files. The maximum individual file size is 10 MB.",
   },
   {
     question: "How much storage is available?",
@@ -30,7 +30,7 @@ const questions = [
   {
     question: "Can I control what a recipient does with a shared document?",
     answer:
-      "When creating a share, you can choose the available permission, such as viewing or downloading. You can also configure an expiration period.",
+      "When creating a share, you can choose view only or view and download. You can also configure an expiration period.",
   },
   {
     question: "Can I revoke a shared link?",
@@ -51,6 +51,16 @@ const questions = [
     question: "Can I delete uploaded documents?",
     answer:
       "Yes. Documents can be deleted through the document management interface. Review the selected document before confirming deletion.",
+  },
+  {
+    question: "How do I reset my password?",
+    answer:
+      "Select “Forgot Password?” on the Login page, enter your account email, and follow the instructions provided.",
+  },
+  {
+    question: "How do I request a Premium upgrade?",
+    answer:
+      "Sign in and start an upgrade from your dashboard. Choose an available option, complete the demonstration payment using fictional test details, then wait for administrator approval. No real charges are processed.",
   },
 ];
 

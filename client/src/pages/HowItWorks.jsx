@@ -6,7 +6,7 @@ const steps = [
     number: "01",
     title: "Create Your Account",
     description:
-      "Register for a DocuFortis account and complete the account verification process. You can also configure multi-factor authentication for additional protection.",
+      "Register for a DocuFortis account and complete the Cloudflare Turnstile security check. You can also configure multi-factor authentication for additional protection.",
   },
   {
     number: "02",

@@ -922,7 +922,7 @@ function About({ user, onLogout, onSettings }) {
                 security considerations part of everyday file management.
               </p>
               <Link to="/register" className="about-button">
-                Explore DocuFortis →
+                Create an Account →
               </Link>
             </div>
           </div>

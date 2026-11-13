@@ -12,7 +12,7 @@ const features = [
     number: "02",
     title: "Controlled Document Sharing",
     description:
-      "Share documents through unique links. Choose whether recipients can view or download a document.",
+      "Share documents through unique links. Choose view only or view and download permissions.",
   },
   {
     number: "03",
@@ -30,7 +30,7 @@ const features = [
     number: "05",
     title: "Document Integrity",
     description:
-      "DocuFortis generates a SHA-256 hash for uploaded documents, providing a unique fingerprint for each file.",
+      "The platform stores a SHA-256 hash derived from each uploaded file's contents as an integrity reference.",
   },
   {
     number: "06",

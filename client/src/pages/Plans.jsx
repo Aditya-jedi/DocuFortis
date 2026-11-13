@@ -1,5 +1,6 @@
 
 import PublicPageLayout from "./PublicPageLayout";
+import { Link } from "react-router-dom";
 
 const plans = [
   {
@@ -75,15 +76,15 @@ export default function Plans({ user, onLogout, onSettings }) {
               ))}
             </ul>
 
-            <a
-              href={plan.href}
+            <Link
+              to={user && plan.featured ? "/premium" : plan.href}
               className={`public-plan-button ${
                 plan.featured ? "premium-button" : "free-button"
               }`}
             >
               {plan.action}
               <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </article>
         ))}
       </section>
@@ -95,9 +96,9 @@ export default function Plans({ user, onLogout, onSettings }) {
         </div>
 
         <p>
-          Premium upgrades are handled through a demonstration payment and
-          manual administrator approval. DocuFortis does not currently process
-          real payments. Each individual file upload is limited to 10 MB.
+          Premium activation requires a successful demonstration payment
+          followed by administrator approval. No real charges are processed.
+          Each individual file upload is limited to 10 MB.
         </p>
       </div>
 

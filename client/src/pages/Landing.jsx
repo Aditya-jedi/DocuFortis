@@ -641,11 +641,53 @@ function Landing({ user, onLogout, onSettings }) {
 
         .landing-pricing-grid {
           display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 22px;
           max-width: 1100px;
           margin: 0 auto;
           align-items: stretch;
+        }
+
+        .landing-platform-note {
+          max-width: 1100px;
+          margin: 24px auto 0;
+          padding: 24px 30px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 24px;
+          border: 1px solid rgba(22, 124, 114, 0.16);
+          border-radius: 19px;
+          background:
+            linear-gradient(
+              110deg,
+              rgba(234, 244, 241, 0.88),
+              rgba(255, 255, 255, 0.92),
+              rgba(245, 233, 201, 0.42)
+            );
+          box-shadow: 0 8px 26px rgba(23, 74, 69, 0.055);
+        }
+
+        .landing-platform-note-copy {
+          min-width: 0;
+        }
+
+        .landing-platform-note h3 {
+          margin: 11px 0 6px;
+          color: var(--deep-teal);
+          font-size: 18px;
+          line-height: 1.35;
+        }
+
+        .landing-platform-note p {
+          margin: 0;
+          color: var(--muted);
+          font-size: 14px;
+          line-height: 1.8;
+        }
+
+        .landing-platform-note .landing-button {
+          flex-shrink: 0;
         }
 
         .landing-pricing-card {
@@ -901,10 +943,6 @@ function Landing({ user, onLogout, onSettings }) {
           .landing-section {
             padding: 75px 5%;
           }
-
-          .landing-pricing-card:last-child {
-            grid-column: 1 / -1;
-          }
         }
 
         @media (max-width: 900px) {
@@ -987,10 +1025,6 @@ function Landing({ user, onLogout, onSettings }) {
             grid-template-columns: 1fr;
           }
 
-          .landing-pricing-card:last-child {
-            grid-column: auto;
-          }
-
           .landing-section {
             padding: 68px 6%;
           }
@@ -1033,6 +1067,17 @@ function Landing({ user, onLogout, onSettings }) {
 
           .landing-cta {
             padding: 70px 6%;
+          }
+
+          .landing-platform-note {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 23px;
+            gap: 18px;
+          }
+
+          .landing-platform-note .landing-button {
+            width: 100%;
           }
         }
 
@@ -1298,22 +1343,27 @@ function Landing({ user, onLogout, onSettings }) {
               </Link>
             </div>
 
-            <div className="landing-pricing-card">
-              <span className="landing-plan-label">All in one place</span>
-              <h3>Built for Control</h3>
-              <div className="landing-plan-storage">One Platform</div>
+          </div>
+
+          <aside
+            className="landing-platform-note"
+            aria-labelledby="landing-platform-note-title"
+          >
+            <div className="landing-platform-note-copy">
+              <span className="landing-plan-label">One Platform</span>
+              <h3 id="landing-platform-note-title">Built for Control</h3>
               <p>
                 Manage documents, sharing permissions, account security, and
                 activity in one place.
               </p>
-              <Link
-                to="/features"
-                className="landing-button landing-button-outline"
-              >
-                View Features
-              </Link>
             </div>
-          </div>
+            <Link
+              to="/features"
+              className="landing-button landing-button-outline"
+            >
+              View Features
+            </Link>
+          </aside>
         </section>
 
         <section className="landing-cta">

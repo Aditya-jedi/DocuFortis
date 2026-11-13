@@ -119,8 +119,11 @@ function Privacy({ user, onLogout, onSettings }) {
         <p>
           This policy may be updated as the platform develops. For
           questions about privacy or information associated with your
-          account, contact the project administrator through the
-          available contact channel.
+          account, email{" "}
+          <a href="mailto:codesyndicate.dev@gmail.com">
+            codesyndicate.dev@gmail.com
+          </a>
+          .
         </p>
       </section>
     </PublicPageLayout>

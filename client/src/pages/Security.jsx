@@ -25,12 +25,12 @@ const securityMeasures = [
   {
     title: "Controlled Document Access",
     description:
-      "Sharing links support view or download permissions, optional recipient restrictions, expiry periods and revocation.",
+      "Sharing links support view only or view and download permissions, optional recipient restrictions, expiry periods and revocation.",
   },
   {
     title: "Document Integrity Records",
     description:
-      "SHA-256 hashes are generated for uploaded documents and stored as document integrity references.",
+      "The platform stores SHA-256 hashes derived from uploaded file contents as integrity references.",
   },
   {
     title: "Activity Audit Logs",
